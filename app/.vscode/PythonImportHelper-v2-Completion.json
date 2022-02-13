@@ -1,0 +1,497 @@
+[
+    {
+        "label": "router",
+        "importPath": "django.db",
+        "description": "django.db",
+        "isExtraImport": true,
+        "detail": "django.db",
+        "documentation": {}
+    },
+    {
+        "label": "APIRouter",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "APIRouter",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "Depends",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "APIRouter",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "FastAPI",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "status",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "FastAPI",
+        "importPath": "fastapi",
+        "description": "fastapi",
+        "isExtraImport": true,
+        "detail": "fastapi",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "List",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "CategoriesModel",
+        "importPath": "schema.user",
+        "description": "schema.user",
+        "isExtraImport": true,
+        "detail": "schema.user",
+        "documentation": {}
+    },
+    {
+        "label": "Session",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "sessionmaker",
+        "importPath": "sqlalchemy.orm",
+        "description": "sqlalchemy.orm",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.orm",
+        "documentation": {}
+    },
+    {
+        "label": "database,",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "database.",
+        "description": "database.",
+        "detail": "database.",
+        "documentation": {}
+    },
+    {
+        "label": "Page",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
+        "documentation": {}
+    },
+    {
+        "label": "paginate",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
+        "documentation": {}
+    },
+    {
+        "label": "Page",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
+        "documentation": {}
+    },
+    {
+        "label": "add_pagination",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
+        "documentation": {}
+    },
+    {
+        "label": "paginate",
+        "importPath": "fastapi_pagination",
+        "description": "fastapi_pagination",
+        "isExtraImport": true,
+        "detail": "fastapi_pagination",
+        "documentation": {}
+    },
+    {
+        "label": "auth",
+        "importPath": "api.api_v1.endpoints",
+        "description": "api.api_v1.endpoints",
+        "isExtraImport": true,
+        "detail": "api.api_v1.endpoints",
+        "documentation": {}
+    },
+    {
+        "label": "user",
+        "importPath": "api.api_v1.endpoints",
+        "description": "api.api_v1.endpoints",
+        "isExtraImport": true,
+        "detail": "api.api_v1.endpoints",
+        "documentation": {}
+    },
+    {
+        "label": "BaseModel",
+        "importPath": "pydantic",
+        "description": "pydantic",
+        "isExtraImport": true,
+        "detail": "pydantic",
+        "documentation": {}
+    },
+    {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "debug",
+        "importPath": "logging",
+        "description": "logging",
+        "isExtraImport": true,
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "TestClient",
+        "importPath": "fastapi.testclient",
+        "description": "fastapi.testclient",
+        "isExtraImport": true,
+        "detail": "fastapi.testclient",
+        "documentation": {}
+    },
+    {
+        "label": "TestClient",
+        "importPath": "fastapi.testclient",
+        "description": "fastapi.testclient",
+        "isExtraImport": true,
+        "detail": "fastapi.testclient",
+        "documentation": {}
+    },
+    {
+        "label": "logger",
+        "importPath": "fastapi.logger",
+        "description": "fastapi.logger",
+        "isExtraImport": true,
+        "detail": "fastapi.logger",
+        "documentation": {}
+    },
+    {
+        "label": "pytest",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pytest",
+        "description": "pytest",
+        "detail": "pytest",
+        "documentation": {}
+    },
+    {
+        "label": "create_engine",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Column",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "Integer",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "String",
+        "importPath": "sqlalchemy",
+        "description": "sqlalchemy",
+        "isExtraImport": true,
+        "detail": "sqlalchemy",
+        "documentation": {}
+    },
+    {
+        "label": "declarative_base",
+        "importPath": "sqlalchemy.ext.declarative",
+        "description": "sqlalchemy.ext.declarative",
+        "isExtraImport": true,
+        "detail": "sqlalchemy.ext.declarative",
+        "documentation": {}
+    },
+    {
+        "label": "APIRouter",
+        "importPath": "fastapi.routing",
+        "description": "fastapi.routing",
+        "isExtraImport": true,
+        "detail": "fastapi.routing",
+        "documentation": {}
+    },
+    {
+        "label": "api_router",
+        "importPath": "api.api_v1.api",
+        "description": "api.api_v1.api",
+        "isExtraImport": true,
+        "detail": "api.api_v1.api",
+        "documentation": {}
+    },
+    {
+        "label": "Mangum",
+        "importPath": "mangum",
+        "description": "mangum",
+        "isExtraImport": true,
+        "detail": "mangum",
+        "documentation": {}
+    },
+    {
+        "label": "Base",
+        "importPath": "database",
+        "description": "database",
+        "isExtraImport": true,
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "login_access_token",
+        "kind": 2,
+        "importPath": "api.api_v1.endpoints.auth",
+        "description": "api.api_v1.endpoints.auth",
+        "peekOfCode": "def login_access_token():\n    return {\"data\":\"This is a test token\"}",
+        "detail": "api.api_v1.endpoints.auth",
+        "documentation": {}
+    },
+    {
+        "label": "router",
+        "kind": 5,
+        "importPath": "api.api_v1.endpoints.auth",
+        "description": "api.api_v1.endpoints.auth",
+        "peekOfCode": "router = APIRouter()\n@router.get(\"/test\")\ndef login_access_token():\n    return {\"data\":\"This is a test token\"}",
+        "detail": "api.api_v1.endpoints.auth",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_categories",
+        "kind": 2,
+        "importPath": "api.api_v1.endpoints.user",
+        "description": "api.api_v1.endpoints.user",
+        "peekOfCode": "def fetch_categories(db: Session = Depends(get_db)):\n    return paginate(db.query(models.Category).all())\n    # return {categories}\n@router.get(\"/categories/{category_id}\", response_model=CategoriesModel)\ndef fetch_category_detail(category_id: int, db: Session = Depends(get_db)):\n    categories = (\n        db.query(models.Category).filter(models.Category.id == category_id).first()\n    )\n    return categories\n    # return {\"data\": categories}",
+        "detail": "api.api_v1.endpoints.user",
+        "documentation": {}
+    },
+    {
+        "label": "fetch_category_detail",
+        "kind": 2,
+        "importPath": "api.api_v1.endpoints.user",
+        "description": "api.api_v1.endpoints.user",
+        "peekOfCode": "def fetch_category_detail(category_id: int, db: Session = Depends(get_db)):\n    categories = (\n        db.query(models.Category).filter(models.Category.id == category_id).first()\n    )\n    return categories\n    # return {\"data\": categories}",
+        "detail": "api.api_v1.endpoints.user",
+        "documentation": {}
+    },
+    {
+        "label": "router",
+        "kind": 5,
+        "importPath": "api.api_v1.endpoints.user",
+        "description": "api.api_v1.endpoints.user",
+        "peekOfCode": "router = APIRouter()\nget_db = database.get_db\n# def fetch_categories(page: Optional[int] = 0, limits: Optional[int] = 1,  db: Session = Depends(get_db)):\n@router.get(\"/categories\", response_model=Page[CategoriesModel])\ndef fetch_categories(db: Session = Depends(get_db)):\n    return paginate(db.query(models.Category).all())\n    # return {categories}\n@router.get(\"/categories/{category_id}\", response_model=CategoriesModel)\ndef fetch_category_detail(category_id: int, db: Session = Depends(get_db)):\n    categories = (",
+        "detail": "api.api_v1.endpoints.user",
+        "documentation": {}
+    },
+    {
+        "label": "get_db",
+        "kind": 5,
+        "importPath": "api.api_v1.endpoints.user",
+        "description": "api.api_v1.endpoints.user",
+        "peekOfCode": "get_db = database.get_db\n# def fetch_categories(page: Optional[int] = 0, limits: Optional[int] = 1,  db: Session = Depends(get_db)):\n@router.get(\"/categories\", response_model=Page[CategoriesModel])\ndef fetch_categories(db: Session = Depends(get_db)):\n    return paginate(db.query(models.Category).all())\n    # return {categories}\n@router.get(\"/categories/{category_id}\", response_model=CategoriesModel)\ndef fetch_category_detail(category_id: int, db: Session = Depends(get_db)):\n    categories = (\n        db.query(models.Category).filter(models.Category.id == category_id).first()",
+        "detail": "api.api_v1.endpoints.user",
+        "documentation": {}
+    },
+    {
+        "label": "api_router",
+        "kind": 5,
+        "importPath": "api.api_v1.api",
+        "description": "api.api_v1.api",
+        "peekOfCode": "api_router = APIRouter()\napi_router.include_router(auth.router, prefix='/login')\napi_router.include_router(user.router, tags=[\"users\"])",
+        "detail": "api.api_v1.api",
+        "documentation": {}
+    },
+    {
+        "label": "CategoriesModel",
+        "kind": 6,
+        "importPath": "schema.user",
+        "description": "schema.user",
+        "peekOfCode": "class CategoriesModel(BaseModel):\n    id: int\n    name: str\n    slug: str\n    image_url: str\n    class Config:\n        orm_mode = True",
+        "detail": "schema.user",
+        "documentation": {}
+    },
+    {
+        "label": "test_root",
+        "kind": 2,
+        "importPath": "tests.test_core",
+        "description": "tests.test_core",
+        "peekOfCode": "def test_root():\n    # response = client.get('/')\n    assert 1 == 1\n    # assert response.json() == {\"message\": \"Hello World\"}",
+        "detail": "tests.test_core",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "tests.test_core",
+        "description": "tests.test_core",
+        "peekOfCode": "app = FastAPI()\nclient = TestClient(app)\ndef test_root():\n    # response = client.get('/')\n    assert 1 == 1\n    # assert response.json() == {\"message\": \"Hello World\"}",
+        "detail": "tests.test_core",
+        "documentation": {}
+    },
+    {
+        "label": "client",
+        "kind": 5,
+        "importPath": "tests.test_core",
+        "description": "tests.test_core",
+        "peekOfCode": "client = TestClient(app)\ndef test_root():\n    # response = client.get('/')\n    assert 1 == 1\n    # assert response.json() == {\"message\": \"Hello World\"}",
+        "detail": "tests.test_core",
+        "documentation": {}
+    },
+    {
+        "label": "get_db",
+        "kind": 2,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "def get_db():\n    db= SessionLocal()\n    try:\n        yield db\n    finally:\n        db.close()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "SQL_ALCHEMY_DB_URL",
+        "kind": 5,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "SQL_ALCHEMY_DB_URL = 'mysql://root:root@localhost/app_jyotish_db'\nengine = create_engine(SQL_ALCHEMY_DB_URL, encoding='latin1', echo=True)\nSessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False,) \nBase = declarative_base()\ndef get_db():\n    db= SessionLocal()\n    try:\n        yield db\n    finally:\n        db.close()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "engine",
+        "kind": 5,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "engine = create_engine(SQL_ALCHEMY_DB_URL, encoding='latin1', echo=True)\nSessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False,) \nBase = declarative_base()\ndef get_db():\n    db= SessionLocal()\n    try:\n        yield db\n    finally:\n        db.close()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "SessionLocal",
+        "kind": 5,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False,) \nBase = declarative_base()\ndef get_db():\n    db= SessionLocal()\n    try:\n        yield db\n    finally:\n        db.close()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "Base",
+        "kind": 5,
+        "importPath": "database",
+        "description": "database",
+        "peekOfCode": "Base = declarative_base()\ndef get_db():\n    db= SessionLocal()\n    try:\n        yield db\n    finally:\n        db.close()",
+        "detail": "database",
+        "documentation": {}
+    },
+    {
+        "label": "test",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def test():\n    return {\"message\": \"Hello World\"}\nadd_pagination(app)\nhandler = Mangum(app)",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "app = FastAPI()\napp.include_router(api_router, prefix=\"/api/v1\")\n@app.get(\"/\")\nasync def read_root():\n    return {\"message\": \"Hello World\"}\n@app.get(\"/test\")\ndef test():\n    return {\"message\": \"Hello World\"}\nadd_pagination(app)\nhandler = Mangum(app)",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "handler",
+        "kind": 5,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "handler = Mangum(app)",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "Category",
+        "kind": 6,
+        "importPath": "models",
+        "description": "models",
+        "peekOfCode": "class Category(Base):\n    __tablename__ = \"categories\"\n    id = Column(Integer, primary_key=True, index=True)\n    name = Column(String)\n    slug = Column(String)\n    image_url = Column(String)",
+        "detail": "models",
+        "documentation": {}
+    }
+]
