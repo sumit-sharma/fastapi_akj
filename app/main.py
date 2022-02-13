@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from fastapi.routing import APIRouter
 
-from app.api.api_v1.api import api_router
+from api.api_v1.api import api_router
 
 from fastapi_pagination import Page, add_pagination, paginate
 
@@ -31,4 +31,4 @@ def test():
 
 add_pagination(app)
 
-handler = Mangum(app)
+handler = Mangum(app=app)

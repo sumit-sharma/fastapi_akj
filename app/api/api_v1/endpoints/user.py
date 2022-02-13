@@ -1,13 +1,13 @@
 from typing import Optional, List
 from fastapi import APIRouter, Depends
-from app.schema.user import CategoriesModel
+from schema.user import CategoriesModel
 from sqlalchemy.orm import Session
-import app.database, app.models as models
+import database, models
 from fastapi_pagination import Page, paginate
 
 router = APIRouter()
 
-get_db = app.database.get_db
+get_db = database.get_db
 
 
 # def fetch_categories(page: Optional[int] = 0, limits: Optional[int] = 1,  db: Session = Depends(get_db)):

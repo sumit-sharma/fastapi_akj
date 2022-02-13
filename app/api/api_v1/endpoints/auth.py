@@ -3,14 +3,14 @@ from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from typing import Optional
 from sqlalchemy.orm import Session
-from app.core.auth.auth_bearer import JWTBearer, signJWT, decodeJWT
-import app.database, app.models as models
-from app.schema.auth import AuthModel, LoginModel
+from core.auth.auth_bearer import JWTBearer, signJWT, decodeJWT
+import database, models
+from schema.auth import AuthModel, LoginModel
 from fastapi.responses import JSONResponse
-from app.schema.user import UserModel
+from schema.user import UserModel
 router = APIRouter()
 
-get_db = app.database.get_db
+get_db = database.get_db
 
 
 def sendsms(country_code, mobile):
