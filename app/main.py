@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from fastapi.routing import APIRouter
 
-# from api.api_v1.api import api_router
+from api.api_v1.api import api_router
 
 from fastapi_pagination import Page, add_pagination, paginate
 
@@ -17,7 +17,7 @@ app = FastAPI()
 
 
 
-# app.include_router(api_router, prefix="/api/v1")
+app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/")
 async def read_root():
