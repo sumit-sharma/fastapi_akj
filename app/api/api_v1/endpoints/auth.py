@@ -3,7 +3,7 @@ from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from typing import Optional
 from sqlalchemy.orm import Session
-from core.auth.auth_bearer import JWTBearer, signJWT, decodeJWT
+from core.auth.auth_bearer import JWTBearer, RoleChecker, signJWT, decodeJWT
 import database, models
 from schema.auth import AuthModel, LoginModel
 from fastapi.responses import JSONResponse

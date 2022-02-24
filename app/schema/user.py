@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 
 from pydantic import BaseModel
 
@@ -7,21 +7,26 @@ class CategoriesModel(BaseModel):
     id: int
     name: str
     slug: str
-    image_url: str
-
+    description: str = None
+    image_url: str = None
     class Config:
         orm_mode = True
 
 
+
+class RoleModel(BaseModel):
+    id: int
+    name: str
+    class Config:
+        orm_mode = True
 class UserModel(BaseModel):
     id: int
-    first_name: str
-    last_name: str
-    # image_url: str
-    country_code: str
+    name: str
+    country: str
     email: str
-    username: str
-    mobile_no: str
-
+    phone: str = None
+    role_id:int   = None
+    role: RoleModel
     class Config:
         orm_mode = True
+

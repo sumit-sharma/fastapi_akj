@@ -1,5 +1,5 @@
 import time
-from typing import Dict
+from typing import Dict, List
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from datetime import datetime, timedelta
@@ -54,7 +54,6 @@ class JWTBearer(HTTPBearer):
 
     def verify_jwt(self, jwtoken: str) -> bool:
         isTokenValid: bool = False
-
         try:
             payload = decodeJWT(jwtoken)
         except:
@@ -62,3 +61,13 @@ class JWTBearer(HTTPBearer):
         if payload:
             isTokenValid = True
         return isTokenValid
+    
+    
+class RoleChecker:
+    def __init__(self, allowed_roles:List):
+        self.allowed_roles = allowed_roles
+        
+    def __call__(self, token):
+        user =  decodeJWT(token)
+        if user.role not in self.allowed_roles:
+            raise HTTPException(status_code=403, detail="Operation not permitted")
