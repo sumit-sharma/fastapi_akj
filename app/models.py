@@ -1,6 +1,6 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Table, DateTime
+from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String, Table, DateTime, Text
 from sqlalchemy.orm import relationship
-from database import Base
+from database import Base, engine
 import datetime
 
 
@@ -47,15 +47,33 @@ class User(Base):
 
 
 
-class AccountOtp(Base):
-    __tablename__ = "accounts_otp"
+# class AccountOtp(Base):
+#     __tablename__ = "accounts_otp"
 
-    id = Column(Integer, primary_key=True, index=True)
-    type = Column(String)
-    otp = Column(String)
-    reference = Column(String)
-    user_id = Column(Integer, ForeignKey('users.id'))
+#     id = Column(Integer, primary_key=True, index=True)
+#     type = Column(String)
+#     otp = Column(String)
+#     reference = Column(String)
+#     user_id = Column(Integer, ForeignKey('users.id'))
+#     created_at = Column(DateTime, default=datetime.datetime.now())
+#     updated_at = Column(DateTime, default=datetime.datetime.now())
+#     # user = relationship("User", back_populates="accounts_otp")
+    
+
+
+class Page(Base):
+    __tablename__ = "pages"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(225))
+    slug = Column(String(225))
+    title = Column(String(225))
+    meta = Column(String(225))
+    # user_id = Column(ForeignKey('users.id')), 
+    content = Column(Text)
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
-    # user = relationship("User", back_populates="accounts_otp")
+
+    
+Base.metadata.create_all(bind=engine)
     
