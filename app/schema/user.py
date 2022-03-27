@@ -35,3 +35,19 @@ class UserModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+class LanguageModel(BaseModel):
+    name: str
+    
+    class Config:
+        orm_mode = True
+
+    
+
+class AstrologerModel(UserModel):
+    # language_id: List[int]
+    # language: List[LanguageModel]    
+    class Config:
+        orm_mode = True
+
+    
