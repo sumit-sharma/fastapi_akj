@@ -74,6 +74,27 @@ class Page(Base):
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
 
+
+class Language(Base):
+    __tablename__ = "languages"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(225))
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+
+class LanguageUser(Base):
+    __tablename__ = "language_user"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    language_id = Column(Integer, ForeignKey('languages.id'))    
+    user_id = Column(Integer, ForeignKey('users.id'))
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+
+    # Relationships
+    language = relationship("Language", foreign_keys=[language_id])
+    user = relationship("User", foreign_keys=[user_id])
+
+    
     
 Base.metadata.create_all(bind=engine)
     
