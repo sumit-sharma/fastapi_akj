@@ -23,6 +23,14 @@ class RoleModel(BaseModel):
     class Config:
         orm_mode = True
 
+class LanguageModel(BaseModel):
+    id: int
+    name: str
+    
+    class Config:
+        orm_mode = True
+
+    
 
 class UserModel(BaseModel):
     id: int
@@ -32,22 +40,25 @@ class UserModel(BaseModel):
     phone: str = None
     role_id: int = None
     role: RoleModel
-
-    class Config:
-        orm_mode = True
-
-class LanguageModel(BaseModel):
-    name: str
+    languages: List[LanguageModel]
     
     class Config:
         orm_mode = True
 
-    
 
-class AstrologerModel(UserModel):
-    # language_id: List[int]
-    # language: List[LanguageModel]    
+class AstrologerModel(BaseModel):
+    experience: Optional[str]
+    about: Optional[str]
+    rating: Optional[float] = None
+    rating_count: Optional[int] = None
     class Config:
         orm_mode = True
 
-    
+
+class AstroModel(BaseModel):
+    User: UserModel
+    Astrologer: AstrologerModel
+    class Config:
+        orm_mode = True
+        
+        

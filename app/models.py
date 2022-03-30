@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String, Table, DateTime, Text
+from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String, Table, DateTime, Text, Float
 from sqlalchemy.orm import relationship
 from database import Base, engine
 import datetime
@@ -42,6 +42,10 @@ class User(Base):
       # Relationships
     role = relationship("Role", foreign_keys=[role_id])
 
+    languages = relationship("Language", secondary="language_user", backref="users")
+
+
+
     # def __repr__(self):
     #     return "<User %r>" % self.role
 
@@ -69,7 +73,8 @@ class Page(Base):
     slug = Column(String(225))
     title = Column(String(225))
     meta = Column(String(225))
-    # user_id = Column(ForeignKey('users.id')), 
+    # user_id = Column(ForeignKey('users.id')),
+     
     content = Column(Text)
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
@@ -91,10 +96,31 @@ class LanguageUser(Base):
     updated_at = Column(DateTime, default=datetime.datetime.now())
 
     # Relationships
+    # language = relationship("Language", foreign_keys=[language_id])
     language = relationship("Language", foreign_keys=[language_id])
     user = relationship("User", foreign_keys=[user_id])
 
+
+
+class Astrologer(Base):
+    __tablename__ = "astrologers"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    experience = Column(String(500))
+    about = Column(Text)
+    rating = Column(Float)
+    rating_count = Column(Integer)
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+    # relationship
+    # user = relationship("User", foreign_keys="user_id")
+    # role = relationship("Role", foreign_keys=[role_id])
+    user = relationship("User",  backref="users", uselist=False)
+
     
+
+
     
 Base.metadata.create_all(bind=engine)
     
