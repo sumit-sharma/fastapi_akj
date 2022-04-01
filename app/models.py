@@ -101,6 +101,16 @@ class LanguageUser(Base):
     user = relationship("User", foreign_keys=[user_id])
 
 
+class AstrologerCategory(Base):
+    __tablename__ = "astrologer_category"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    category_id = Column(Integer, ForeignKey('categories.id'))
+    astrologer_id = Column(Integer, ForeignKey('astrologers.id'))    
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+    # Relationships
+    category = relationship("Category", foreign_keys=[category_id])
+    astrologer = relationship("Astrologer", foreign_keys=[astrologer_id])
 
 class Astrologer(Base):
     __tablename__ = "astrologers"
@@ -118,7 +128,8 @@ class Astrologer(Base):
     # role = relationship("Role", foreign_keys=[role_id])
     user = relationship("User",  backref="users", uselist=False)
 
-    
+    category = relationship("Category", secondary="astrologer_category", backref="astrologers")
+
 
 
     

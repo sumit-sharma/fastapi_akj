@@ -51,6 +51,8 @@ class AstrologerModel(BaseModel):
     about: Optional[str]
     rating: Optional[float] = None
     rating_count: Optional[int] = None
+    
+    category: List[CategoriesModel]
     class Config:
         orm_mode = True
 
