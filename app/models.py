@@ -2,7 +2,7 @@ from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String, Table, D
 from sqlalchemy.orm import relationship
 from database import Base, engine
 import datetime
-
+from sqlalchemy.dialects.mysql import BIGINT
 
 # group = Table('users_groups', Base.metadata,
 #     # id = Column(Integer, primary_key=True, index=True)
@@ -38,6 +38,7 @@ class User(Base):
     email = Column(String)
     country = Column(String)
     phone = Column(String)
+    profile_image = Column(String)
     role_id = Column(Integer, ForeignKey('roles.id'))    
       # Relationships
     role = relationship("Role", foreign_keys=[role_id])
@@ -51,17 +52,15 @@ class User(Base):
 
 
 
-# class AccountOtp(Base):
-#     __tablename__ = "accounts_otp"
+class AccountOtp(Base):
+    __tablename__ = "accounts_otp"
 
-#     id = Column(Integer, primary_key=True, index=True)
-#     type = Column(String)
-#     otp = Column(String)
-#     reference = Column(String)
-#     user_id = Column(Integer, ForeignKey('users.id'))
-#     created_at = Column(DateTime, default=datetime.datetime.now())
-#     updated_at = Column(DateTime, default=datetime.datetime.now())
-#     # user = relationship("User", back_populates="accounts_otp")
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    otp = Column(String(20))
+    user_id = Column(BIGINT(unsigned=True), ForeignKey('users.id'))
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+    user = relationship("User", foreign_keys=[user_id])
     
 
 

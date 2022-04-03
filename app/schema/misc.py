@@ -20,3 +20,17 @@ class EditPageModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+class LanguageModel(BaseModel):
+    id: int
+    name: str
+
+    class Config:
+        orm_mode = True
+
+class CreateLanguageModel(BaseModel):
+    name: str
+
+    class Config:
+        orm_mode = True
+

@@ -39,6 +39,7 @@ class UserModel(BaseModel):
     email: str
     phone: str = None
     role_id: int = None
+    profile_image: str = None
     role: RoleModel
     languages: List[LanguageModel]
     

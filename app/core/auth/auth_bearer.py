@@ -8,7 +8,7 @@ from jose import JWTError, jwt
 
 JWT_SECRET = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 JWT_ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 60
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 30
 
 
 def decodeJWT(token: str) -> dict:
@@ -22,14 +22,15 @@ def decodeJWT(token: str) -> dict:
 def token_response(token: str):
     return {
         "access_token": token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "expires_at": datetime.now() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     }
 
 
 def signJWT(user_id: str) -> Dict[str, str]:
     payload = {
         "user_id": user_id,
-        "expires": time.time() + ACCESS_TOKEN_EXPIRE_MINUTES
+        "expires": time.time() + (ACCESS_TOKEN_EXPIRE_MINUTES * 60)
     }
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 

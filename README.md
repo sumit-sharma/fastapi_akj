@@ -1,32 +1,22 @@
 # AKJ 
 This project is created with FastAPI
 
-Supervisor Conf
-
-location: `/etc/supervisor/conf.d/gunicorn.conf`
+activate virtual env
+```
+source ...venv/bin/activate
+```
+if first time start **pm2**  process
 
 ```
-[inet_http_server]
-port=127.0.0.1:9001
-[rpcinterface:supervisor]
-supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
-[supervisorctl]
-serverurl=http://127.0.0.1:9001
-[supervisord]
-[program:gunicorn]
-environment = PYTHONUNBUFFERED=1
-user=ubuntu
-directory=/var/www/html/python/akj/backenend/fastapi/fastapi_akj/app
-command=/var/www/html/python/akj/backenend/fastapi/fastapi_akj/venv/bin/gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
-autostart=true
-autorestart=true
-stderr_logfile=/var/log/gunicorn/gunicorn.err.log
-stdout_logfile=/var/log/gunicorn/gunicorn.out.log
+pm2 start "gunicorn -w 2 -k uvicorn.workers.UvicornWorker main:app" --name fastapi
 ```
 
-refresh/reload supervisor after changes in code as supervisor creates caches
+if there is already running stop/kill process
 ```
-sudo supervisorctl reread && sudo supervisorctl update
+pm2 stop/delete all
+```
 
-``` 
-
+save pm2
+```
+pm2 save
+```
