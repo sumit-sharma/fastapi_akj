@@ -64,4 +64,8 @@ class AstroModel(BaseModel):
     class Config:
         orm_mode = True
         
-        
+
+class RatingInModel(BaseModel):
+    user_id: int
+    rate: int
+    remark: Optional[str]

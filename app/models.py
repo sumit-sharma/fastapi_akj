@@ -2,7 +2,7 @@ from sqlalchemy import BigInteger, Column, ForeignKey, Integer, String, Table, D
 from sqlalchemy.orm import relationship
 from database import Base, engine
 import datetime
-from sqlalchemy.dialects.mysql import BIGINT
+from sqlalchemy.dialects.mysql import BIGINT, SMALLINT
 
 # group = Table('users_groups', Base.metadata,
 #     # id = Column(Integer, primary_key=True, index=True)
@@ -130,6 +130,16 @@ class Astrologer(Base):
     category = relationship("Category", secondary="astrologer_category", backref="astrologers")
 
 
+class Rating(Base):
+    __tablename__ = 'ratings'
+    id = Column(Integer, primary_key=True,autoincrement=True)
+    user_id = Column(BIGINT(unsigned=True), ForeignKey('users.id'), comment="user who be rated")
+    created_by = Column(BIGINT(unsigned=True), ForeignKey('users.id'))
+    rate = Column(SMALLINT(unsigned=True))
+    remark = Column(Text)
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())    
+    user = relationship("User", foreign_keys=[user_id])
 
     
 Base.metadata.create_all(bind=engine)
