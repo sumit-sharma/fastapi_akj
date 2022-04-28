@@ -36,7 +36,7 @@ def create_category(item: CreateCategoryModel, db: Session = Depends(get_db)):
     return category
 
 
-@router.put("/category/{categoryId}", response_model=CategoriesModel)
+@router.put("/category/{category_id}", response_model=CategoriesModel)
 def edit_category(category_id: int, item: CreateCategoryModel, db: Session = Depends(get_db)):
     category = db.query(models.Category).filter(models.Category.id == category_id).first()
     category.name= item.name
