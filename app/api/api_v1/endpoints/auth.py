@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
-from core.auth.auth_bearer import JWTBearer, RoleChecker, signJWT, decodeJWT
+from core.auth.auth_bearer import JWTBearer, RoleChecker, role_checker, signJWT, decodeJWT
 import database, models
 from schema.auth import AuthModel, LoginModel
 from fastapi.responses import JSONResponse
@@ -97,12 +97,19 @@ def login_access_token(item: LoginModel, db: Session = Depends(get_db)):
         return JSONResponse(status_code=403, content={"message": "Invalid otp or it has been expired"})
 
 
-@router.get("/user", response_model=UserModel)
-def user_profile(token: str = Depends(JWTBearer()), db: Session = Depends(get_db)):
-    result =  decodeJWT(token)
-    user =  db.query(models.User).filter(models.User.id == result['user_id']).first()
-    return user    
+# @router.get("/user", response_model=UserModel)
+# def user_profile(token: str = Depends(JWTBearer()), db: Session = Depends(get_db)):
+#     result =  decodeJWT(token)
+#     user =  db.query(models.User).filter(models.User.id == result['user_id']).first()
+#     return user    
 
+allowed_roles = role_checker(['user'])
+@router.get("/user")
+def user_profile(user = Depends(allowed_roles), db: Session = Depends(get_db)):
+    return user
+    # result =  decodeJWT(token)
+    # user =  db.query(models.User).filter(models.User.id == result['user_id']).first()
+    # return user    
 
 
 

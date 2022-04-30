@@ -1,15 +1,19 @@
+from requests import Session
+import core.auth.auth_bearer
 import time
 from typing import Dict, List
-from fastapi import Request, HTTPException
+from fastapi import Depends, Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
+import database, models
 
 
 JWT_SECRET = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_TIME = 60* 60 * 24 * 30 *6
 
+get_db = database.get_db
 
 def decodeJWT(token: str) -> dict:
     try:
@@ -35,8 +39,21 @@ def signJWT(user_id: str) -> Dict[str, str]:
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
     return token_response(token)
-    
 
+jwt_bearer =   JWTBearer()  
+def role_checker(allowed_roles:List, dependencies=[Depends()]):
+    db = next(database.get_db())
+    token =  JWTBearer()
+    return token
+    return  decodeJWT(token)
+    return authtoken
+    if authtoken:
+        user = db.query(models.User).\
+                    filter(models.User.id == authtoken['user_id']).first()
+        if user.role.name not in allowed_roles:
+            raise HTTPException(status_code=403, detail="Operation not permitted")
+
+        return user
 
 class JWTBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
@@ -49,7 +66,8 @@ class JWTBearer(HTTPBearer):
                 raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
             if not self.verify_jwt(credentials.credentials):
                 raise HTTPException(status_code=403, detail="Invalid token or expired token.")
-            return credentials.credentials
+            else:
+                return self.verify_jwt(credentials.credentials)
         else:
             raise HTTPException(status_code=403, detail="Invalid authorization code.")
 
@@ -62,6 +80,8 @@ class JWTBearer(HTTPBearer):
         if payload:
             isTokenValid = True
         return isTokenValid
+    
+    
     
     
 class RoleChecker:

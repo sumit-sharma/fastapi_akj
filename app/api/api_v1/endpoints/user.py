@@ -54,7 +54,7 @@ def avg_rate(user_id, save=False, db: Session = Depends(get_db)):
 
 
 @router.post("/rate-astrologer")
-def rate_astrologer(item: RatingInModel,token: str = Depends(JWTBearer()),  db: Session = Depends(get_db)):    
+def rate_astrologer(item: RatingInModel, token: str = Depends(JWTBearer(['admin'])), db: Session = Depends(get_db)):    
     authtoken =  decodeJWT(token)
     row = db.query(models.Rating).filter(models.Rating.user_id == item.user_id, models.Rating.created_by == authtoken['user_id']).first()
     if(row):
