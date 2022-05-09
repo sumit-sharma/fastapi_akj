@@ -1,13 +1,13 @@
 from typing import Optional, List
-from fastapi import APIRouter, Depends
-from core.auth.auth_bearer import JWTBearer, RoleChecker
+from fastapi import APIRouter, Depends, Header, Path
+from api.deps import RoutePermission
+from core.auth.auth_bearer import JWTBearer
 from schema.user import CategoriesModel
 from sqlalchemy.orm import Session
 import database, models
 from fastapi_pagination import Page, paginate
-from schema.auth import  CreateCategoryModel
+from schema.auth import CreateCategoryModel
 from slugify import slugify
-
 
 
 router = APIRouter()
@@ -15,38 +15,62 @@ router = APIRouter()
 get_db = database.get_db
 
 # def fetch_categories(page: Optional[int] = 0, limits: Optional[int] = 1,  db: Session = Depends(get_db)):
-# @router.get("/categories", response_model=Page[CategoriesModel])
-@router.get("/categories")
-def fetch_categories(token: str = Depends(RoleChecker(["admin"])), db: Session = Depends(get_db)):
+@router.get("/categories", response_model=Page[CategoriesModel])
+def fetch_categories(db: Session = Depends(get_db)):
     return paginate(db.query(models.Category).all())
 
 
-
-@router.get("/categories/{category_id}", response_model=CategoriesModel)
-def show_category(category_id: int, db: Session = Depends(get_db)):
-    category = db.query(models.Category).filter(models.Category.id == category_id).first()
+@router.get(
+    "/categories/{category_id}", name="show_category", response_model=CategoriesModel
+)
+def show_category(
+    category_id: int,
+    db: Session = Depends(get_db),
+):
+    category = (
+        db.query(models.Category).filter(models.Category.id == category_id).first()
+    )
     return category
 
 
+permission = RoutePermission(route_name="create_category")
+
 
 @router.post("/category", response_model=CategoriesModel)
-def create_category(item: CreateCategoryModel, db: Session = Depends(get_db)):
-    category = models.Category(name=item.name, slug=slugify(item.name), description=item.description, image_url=item.image_url)
+def create_category(
+    item: CreateCategoryModel,
+    db: Session = Depends(get_db),
+    current_user=Depends(permission),
+):
+    category = models.Category(
+        name=item.name,
+        slug=slugify(item.name),
+        description=item.description,
+        image_url=item.image_url,
+    )
     db.add(category)
     db.commit()
     db.refresh(category)
     return category
 
 
+permission = RoutePermission(route_name="edit_category")
+
+
 @router.put("/category/{category_id}", response_model=CategoriesModel)
-def edit_category(category_id: int, item: CreateCategoryModel,  token: str = Depends(RoleChecker(["admin"])), db: Session = Depends(get_db)):
-    category = db.query(models.Category).filter(models.Category.id == category_id).first()
-    category.name= item.name
-    category.slug=slugify(item.name)
-    category.description=item.description
-    category.image_url=item.image_url
+def edit_category(
+    category_id: int,
+    item: CreateCategoryModel,
+    db: Session = Depends(get_db),
+    current_user=Depends(permission),
+):
+    category = (
+        db.query(models.Category).filter(models.Category.id == category_id).first()
+    )
+    category.name = item.name
+    category.slug = slugify(item.name)
+    category.description = item.description
+    category.image_url = item.image_url
     db.commit()
     db.refresh(category)
     return category
-
- 

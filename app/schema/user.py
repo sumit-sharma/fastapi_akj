@@ -69,3 +69,19 @@ class RatingInModel(BaseModel):
     user_id: int
     rate: int
     remark: Optional[str]
+    
+
+class RouteInAccessModel(BaseModel):
+    route_url: str
+    role_id: int
+    class Config:
+        orm_mode = True
+    
+class RouteAccessModel(BaseModel):
+    route_url: str
+    role_id: int
+    role: RoleModel
+    class Config:
+        orm_mode = True
+
+    

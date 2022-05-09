@@ -71,6 +71,3 @@ def rate_astrologer(item: RatingInModel, token: str = Depends(JWTBearer(['admin'
     """    
     return avg_rate(item.user_id, True, db)
     
-
-
-

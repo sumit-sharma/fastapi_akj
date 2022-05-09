@@ -1,6 +1,9 @@
 from typing import Optional, List
 from fastapi import APIRouter, Depends
+from fastapi_pagination import paginate, Page
 from sqlalchemy.orm import Session, selectinload
+from api.deps import get_current_active_user
+from schema.user import RouteInAccessModel, RouteAccessModel
 import database, models
 from core.auth.auth_bearer import signJWT
 from schema.auth import AdminLoginModel, CreateCategoryModel
@@ -38,7 +41,22 @@ def admin_login(item: AdminLoginModel, db: Session = Depends(get_db)):
     user = authuneticate_user(item.email, item.password, db)
     return {"detail": user, "token": signJWT(user.id)}
 
+@router.post("/list-routes", response_model=Page[RouteAccessModel])
+def list_routes(db: Session = Depends(get_db), current_user=Depends(get_current_active_user)):
+    return paginate(db.query(models.RouteAccess).all())
 
+@router.post("/add-routes", response_model=RouteAccessModel)
+def add_routes(item: RouteInAccessModel, db: Session = Depends(get_db), current_user=Depends(get_current_active_user)):
+    row = db.query(models.RouteAccess).\
+            filter(models.RouteAccess.role_id == item.role_id, models.RouteAccess.route_url == item.route_url).\
+            first()
+    if(not row):
+        row = models.RouteAccess(role_id = item.role_id, route_url = item.route_url)
+        db.add(row)
+        db.commit()
+        db.refresh(row)
+    
+    return row
 
 
 

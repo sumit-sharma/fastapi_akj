@@ -1,12 +1,12 @@
-
 import math
 import random
-from typing import Optional, List
+from typing import Any, Optional, List
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
-from core.auth.auth_bearer import JWTBearer, RoleChecker, role_checker, signJWT, decodeJWT
+from api.deps import get_current_active_user
+from core.auth.auth_bearer import JWTBearer, signJWT, decodeJWT
 import database, models
 from schema.auth import AuthModel, LoginModel
 from fastapi.responses import JSONResponse
@@ -15,101 +15,118 @@ import requests
 from settings import otp_exp_min
 from datetime import datetime
 
+
 router = APIRouter()
 
 get_db = database.get_db
 
 
 # function to generate OTP
-def generateOTP(num : int= 4):
- 
-    # Declare a digits variable 
+def generateOTP(num: int = 4):
+
+    # Declare a digits variable
     # which stores all digits
     digits = "0123456789"
     OTP = ""
- 
-   # length of password can be changed
-   # by changing value in range
-    for i in range(num) :
+
+    # length of password can be changed
+    # by changing value in range
+    for i in range(num):
         OTP += digits[math.floor(random.random() * 10)]
- 
+
     return OTP
+
 
 def sendsms(country_code, mobile):
     return 1234
     # URL =  "http://164.52.195.161/API/BalAlert.aspx"
-	# PARAMS = {'uname': 20220081, 'pass': "G99x9GJX", 'send': "KANNDS"}
-    otp =  generateOTP(4);
+    # PARAMS = {'uname': 20220081, 'pass': "G99x9GJX", 'send': "KANNDS"}
+    otp = generateOTP(4)
 
     TXTSMS = "http://164.52.195.161/API/SendMsg.aspx?uname=20220081&pass=G99x9GJX&send=KANNDS&dest=#mobile&msg=Dear%20Customer,%0A%0AOTP%20for%20verify%20your%20mobile%20number%20on%20%20AKJ%20is%20#otp.%0AKANNDS"
     TXTSMS = TXTSMS.replace("#mobile", mobile)
-    TXTSMS = TXTSMS.replace("#otp", otp)	
+    TXTSMS = TXTSMS.replace("#otp", otp)
     # r = requests.get(url = URL, params = PARAMS)
     r = requests.get(TXTSMS)
-	# extracting data in json format
+    # extracting data in json format
     # data = r.json()
-	
+
     return otp
+
+
 # check user
 def check_user(country_code, mobile, db: Session = Depends(get_db)):
     status = False
-    user = db.query(models.User).filter(models.User.country == country_code, models.User.phone == mobile).first()
-    if(user):
+    user = (
+        db.query(models.User)
+        .filter(models.User.country == country_code, models.User.phone == mobile)
+        .first()
+    )
+    if user:
         status = user
-    
+
     return status
 
+
 def otp_user(user_id: int, otp: int, db: Session = Depends(get_db)):
-    user = db.query(models.AccountOtp).filter(models.AccountOtp.user_id == user_id, models.AccountOtp.otp == otp).\
-                    order_by(
-                        desc(models.AccountOtp.id)
-                        ).first()
-    if(user):
-        return True # TODO: delete later
-        minutes = round((datetime.now() - user.created_at).total_seconds()/60)
-        if(minutes <= int(otp_exp_min)):
+    user = (
+        db.query(models.AccountOtp)
+        .filter(models.AccountOtp.user_id == user_id, models.AccountOtp.otp == otp)
+        .order_by(desc(models.AccountOtp.id))
+        .first()
+    )
+    if user:
+        return True  # TODO: delete later
+        minutes = round((datetime.now() - user.created_at).total_seconds() / 60)
+        if minutes <= int(otp_exp_min):
             return True
     return False
-        
+
 
 @router.post("/send_otp")
-def send_otp(item: AuthModel, db: Session = Depends(get_db)):    
-    otp =  sendsms(item.country_code, item.mobile)
+def send_otp(item: AuthModel, db: Session = Depends(get_db)):
+    otp = sendsms(item.country_code, item.mobile)
     user = check_user(item.country_code, item.mobile, db)
-    if(user):
-        row =  models.AccountOtp(otp=otp, user_id = user.id)
+    if user:
+        row = models.AccountOtp(otp=otp, user_id=user.id)
         db.add(row)
         db.commit()
         db.refresh(row)
-        return JSONResponse(status_code=200, content={"message": "otp has been send to your mobile"})
+        return JSONResponse(
+            status_code=200, content={"message": "otp has been send to your mobile"}
+        )
     else:
         return JSONResponse(status_code=404, content={"message": "user not found"})
-
-
 
 
 @router.post("/login")
 def login_access_token(item: LoginModel, db: Session = Depends(get_db)):
     user = check_user(item.country_code, item.mobile, db)
-    if(otp_user(user.id, item.otp, db)):
+    if otp_user(user.id, item.otp, db):
         return {"token": signJWT(user.id), "detail": user}
     else:
-        return JSONResponse(status_code=403, content={"message": "Invalid otp or it has been expired"})
+        return JSONResponse(
+            status_code=403, content={"message": "Invalid otp or it has been expired"}
+        )
 
 
 # @router.get("/user", response_model=UserModel)
 # def user_profile(token: str = Depends(JWTBearer()), db: Session = Depends(get_db)):
 #     result =  decodeJWT(token)
 #     user =  db.query(models.User).filter(models.User.id == result['user_id']).first()
-#     return user    
+#     return user
 
-allowed_roles = role_checker(['user'])
-@router.get("/user")
-def user_profile(user = Depends(allowed_roles), db: Session = Depends(get_db)):
-    return user
+# @router.get("/user", name="myprofile", response_model=UserModel)
+@router.get("/user/me", name="myprofile")
+# def user_profile(user = Depends(allowed_roles), token: str = Depends(JWTBearer()),  db: Session = Depends(get_db)):
+# def user_profile(current_user = Depends(JWTBearer()), db: Session = Depends(get_db)):
+
+def user_profile(
+    db: Session = Depends(get_db), current_user=Depends(get_current_active_user)
+) -> Any:
+    # result =  decodeJWT(token)
+    return current_user
+    # return current_user
     # result =  decodeJWT(token)
     # user =  db.query(models.User).filter(models.User.id == result['user_id']).first()
-    # return user    
-
-
-
+    # return user
