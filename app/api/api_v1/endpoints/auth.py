@@ -8,13 +8,13 @@ from sqlalchemy import desc
 from api.deps import RoleChecker
 from core.auth.auth_bearer import JWTBearer, signJWT, decodeJWT
 import database, models
-from schema.auth import AuthModel, LoginModel
+from schema.auth import AuthModel, LoginModel, RegisterModel
 from fastapi.responses import JSONResponse
 from schema.user import UserModel
 import requests
 from settings import otp_exp_min
 from datetime import datetime
-from api.deps import RoutePermission
+from api.deps import RoutePermission, store_user
 
 
 router = APIRouter()
@@ -112,34 +112,35 @@ def login_access_token(item: LoginModel, db: Session = Depends(get_db)):
 
 
 @router.post("/register")
-def login_access_token(item: LoginModel, db: Session = Depends(get_db)):
+def register_user(item: RegisterModel, db: Session = Depends(get_db)):
     user = check_user(item.country_code, item.mobile, db)
-    if otp_user(user.id, item.otp, db):
-        return {"token": signJWT(user.id), "detail": user}
-    else:
+    if(user):
         return JSONResponse(
-            status_code=403, content={"message": "Invalid otp or it has been expired"}
+            status_code=400, content={"message": "Phone details already registered"}
         )
+    else:
+        itemData = item.dict()
+        itemData["role_id"] = 2
+        user =  store_user(itemData, db)
+        AuthItem = AuthModel(country_code = itemData["country_code"], mobile = itemData["mobile"])
+        return send_otp(AuthItem, db)
 
 
-# @router.get("/user", response_model=UserModel)
-# def user_profile(token: str = Depends(JWTBearer()), db: Session = Depends(get_db)):
-#     result =  decodeJWT(token)
-#     user =  db.query(models.User).filter(models.User.id == result['user_id']).first()
-#     return user
 
-# @router.get("/user", name="myprofile", response_model=UserModel)
-
-allowed_roles = RoleChecker(["user"])
+allowed_roles = RoleChecker(["user", "astrologer"])
 
 
 @router.get("/user/me", name="myprofile", response_model=UserModel)
 def user_profile(
     db: Session = Depends(get_db), current_user=Depends(allowed_roles)
 ) -> Any:
-    # result =  decodeJWT(token)
     return current_user
-    # return current_user
-    # result =  decodeJWT(token)
-    # user =  db.query(models.User).filter(models.User.id == result['user_id']).first()
-    # return user
+
+
+@router.get("/user/me", name="myprofile", response_model=UserModel)
+def user_profile(
+    db: Session = Depends(get_db), current_user=Depends(allowed_roles)
+) -> Any:
+    return current_user
+
+
