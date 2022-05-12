@@ -1,6 +1,6 @@
 from typing import Optional, List
 from fastapi import APIRouter, Depends, Header, Path
-from api.deps import RoutePermission
+from api.deps import RoleChecker, RoutePermission
 from core.auth.auth_bearer import JWTBearer
 from schema.user import CategoriesModel
 from sqlalchemy.orm import Session
@@ -33,14 +33,12 @@ def show_category(
     return category
 
 
-permission = RoutePermission(route_name="create_category")
-
-
+allowed_roles = RoleChecker(["admin"])
 @router.post("/category", response_model=CategoriesModel)
 def create_category(
     item: CreateCategoryModel,
     db: Session = Depends(get_db),
-    current_user=Depends(permission),
+    current_user=Depends(allowed_roles),
 ):
     category = models.Category(
         name=item.name,
@@ -54,15 +52,13 @@ def create_category(
     return category
 
 
-permission = RoutePermission(route_name="edit_category")
-
-
+allowed_roles = RoleChecker(["admin"])
 @router.put("/category/{category_id}", response_model=CategoriesModel)
 def edit_category(
     category_id: int,
     item: CreateCategoryModel,
     db: Session = Depends(get_db),
-    current_user=Depends(permission),
+    current_user=Depends(allowed_roles),
 ):
     category = (
         db.query(models.Category).filter(models.Category.id == category_id).first()

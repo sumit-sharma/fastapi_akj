@@ -13,6 +13,14 @@ class LoginModel(AuthModel):
     otp: str
     
     
+class RegisterModel(AuthModel):
+    first_name: str
+    last_name: str
+    
+    email: str
+    
+    
+    
     
 class AdminLoginModel(BaseModel):
     email: str

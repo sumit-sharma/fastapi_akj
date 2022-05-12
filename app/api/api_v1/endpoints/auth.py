@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
-from api.deps import get_current_active_user
+from api.deps import RoleChecker
 from core.auth.auth_bearer import JWTBearer, signJWT, decodeJWT
 import database, models
 from schema.auth import AuthModel, LoginModel
@@ -14,6 +14,7 @@ from schema.user import UserModel
 import requests
 from settings import otp_exp_min
 from datetime import datetime
+from api.deps import RoutePermission
 
 
 router = APIRouter()
@@ -99,7 +100,18 @@ def send_otp(item: AuthModel, db: Session = Depends(get_db)):
         return JSONResponse(status_code=404, content={"message": "user not found"})
 
 
-@router.post("/login")
+@router.post("/verify_otp")
+def login_access_token(item: LoginModel, db: Session = Depends(get_db)):
+    user = check_user(item.country_code, item.mobile, db)
+    if otp_user(user.id, item.otp, db):
+        return {"token": signJWT(user.id), "detail": user}
+    else:
+        return JSONResponse(
+            status_code=403, content={"message": "Invalid otp or it has been expired"}
+        )
+
+
+@router.post("/register")
 def login_access_token(item: LoginModel, db: Session = Depends(get_db)):
     user = check_user(item.country_code, item.mobile, db)
     if otp_user(user.id, item.otp, db):
@@ -117,12 +129,13 @@ def login_access_token(item: LoginModel, db: Session = Depends(get_db)):
 #     return user
 
 # @router.get("/user", name="myprofile", response_model=UserModel)
-@router.get("/user/me", name="myprofile")
-# def user_profile(user = Depends(allowed_roles), token: str = Depends(JWTBearer()),  db: Session = Depends(get_db)):
-# def user_profile(current_user = Depends(JWTBearer()), db: Session = Depends(get_db)):
 
+allowed_roles = RoleChecker(["user"])
+
+
+@router.get("/user/me", name="myprofile", response_model=UserModel)
 def user_profile(
-    db: Session = Depends(get_db), current_user=Depends(get_current_active_user)
+    db: Session = Depends(get_db), current_user=Depends(allowed_roles)
 ) -> Any:
     # result =  decodeJWT(token)
     return current_user

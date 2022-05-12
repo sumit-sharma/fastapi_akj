@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Optional
+from typing import Any, List, Optional
 from fastapi import Depends, HTTPException, Security, status, Request, Path
 from fastapi.security import OAuth2PasswordBearer, SecurityScopes
 from jose import jwt
@@ -29,6 +29,9 @@ def get_current_user(
 
 
 class RoutePermission:
+    """use when you want to manage permissions by table and managed by UI.
+        incase you want static role-based-permission use `RoleChecker` class
+    """
     def __init__(
         self,
         route_name: str = "",
@@ -63,3 +66,17 @@ class RoutePermission:
                 )
 
         return current_user
+class RoleChecker:
+    """use you want static role-based-permission.
+        incase you want to manage permissions by table and managed by UI use `RoutePermission`.
+    """
+    def __init__(self, allowed_roles: List):
+        self.allowed_roles = allowed_roles
+
+    def __call__(self, current_user=Depends(get_current_user)):
+        if current_user.role.name != 'admin' and current_user.role.name not in self.allowed_roles:
+            logger.debug(f"User with role {current_user.role.name} not in {self.allowed_roles}")
+            raise HTTPException(status_code=403, detail="Permission denied for this operation")
+        
+        return current_user
+
