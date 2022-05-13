@@ -33,7 +33,7 @@ class LanguageModel(BaseModel):
 class UserModel(BaseModel):
     id: int
     first_name: str
-    last_name: str
+    last_name: Optional[str]
     country: str
     email: str
     phone: str = None
