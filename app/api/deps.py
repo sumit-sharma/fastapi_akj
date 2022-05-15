@@ -32,6 +32,10 @@ def store_user(
     item: List,
     db: Session = Depends(get_db),
 ) -> Any:
+    last_name =  item["last_name"][0] if not item["last_name"] is None else ""
+    short_name = (
+        item["first_name"][0] + last_name
+    ).strip()
     user = models.User(
         country=item["country_code"],
         phone=item["mobile"],
@@ -39,8 +43,37 @@ def store_user(
         last_name=item["last_name"],
         email=item["email"],
         role_id=item["role_id"],
+        shortName=short_name,
     )
     db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def update_user(
+    id: int,
+    item: List,
+    db: Session = Depends(get_db)
+) -> Any:
+
+    last_name =  item.last_name[0] if not item.last_name is None else ""
+    short_name = (
+        item.first_name[0] + last_name
+    ).strip()
+
+    user = db.query(models.User).filter(models.User.id == id).first()
+
+
+    user.first_name = item.first_name
+    user.last_name = item.last_name
+    user.shortName = short_name
+    user.gender = item.gender
+    user.dob = item.dob
+    user.birth_time = item.birth_time
+    user.birth_place = item.birth_place
+    user.profile_image = item.profile_image
+
     db.commit()
     db.refresh(user)
     return user

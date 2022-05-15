@@ -8,6 +8,7 @@ from sqlalchemy import (
     DateTime,
     Text,
     Float,
+    Date
 )
 from sqlalchemy.orm import relationship
 from database import Base, engine
@@ -46,15 +47,25 @@ class User(Base):
     password = Column(String)
     first_name = Column(String)
     last_name = Column(String)
+    shortName = Column(String)
+    gender = Column(String)
+    dob = Column(Date)
+    birth_time = Column(String)
+    birth_place = Column(String)
     email = Column(String)
     country = Column(String)
     phone = Column(String)
     profile_image = Column(String)
     role_id = Column(Integer, ForeignKey("roles.id"))
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+    
+    
     # Relationships
     role = relationship("Role", foreign_keys=[role_id])
 
     languages = relationship("Language", secondary="language_user", backref="users")
+    
 
     # def __repr__(self):
     #     return "<User %r>" % self.role

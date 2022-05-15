@@ -5,12 +5,12 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
-from api.deps import RoleChecker
+from api.deps import RoleChecker, update_user
 from core.auth.auth_bearer import JWTBearer, signJWT, decodeJWT
 import database, models
 from schema.auth import AuthModel, LoginModel, RegisterModel
 from fastapi.responses import JSONResponse
-from schema.user import UserModel
+from schema.user import UpdateProfileModel, UserModel
 import requests
 from settings import otp_exp_min
 from datetime import datetime
@@ -114,17 +114,18 @@ def login_access_token(item: LoginModel, db: Session = Depends(get_db)):
 @router.post("/register")
 def register_user(item: RegisterModel, db: Session = Depends(get_db)):
     user = check_user(item.country_code, item.mobile, db)
-    if(user):
+    if user:
         return JSONResponse(
             status_code=400, content={"message": "Phone details already registered"}
         )
     else:
         itemData = item.dict()
         itemData["role_id"] = 2
-        user =  store_user(itemData, db)
-        AuthItem = AuthModel(country_code = itemData["country_code"], mobile = itemData["mobile"])
+        user = store_user(itemData, db)
+        AuthItem = AuthModel(
+            country_code=itemData["country_code"], mobile=itemData["mobile"]
+        )
         return send_otp(AuthItem, db)
-
 
 
 allowed_roles = RoleChecker(["user", "astrologer"])
@@ -137,10 +138,10 @@ def user_profile(
     return current_user
 
 
-@router.get("/user/me", name="myprofile", response_model=UserModel)
-def user_profile(
-    db: Session = Depends(get_db), current_user=Depends(allowed_roles)
+@router.put("/update-profile", response_model=UserModel)
+def update_profile(
+    item: UpdateProfileModel,
+    db: Session = Depends(get_db),
+    current_user=Depends(allowed_roles),
 ) -> Any:
-    return current_user
-
-
+    return update_user(current_user.id, item, db)

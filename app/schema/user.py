@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Optional, List
 
 from pydantic import BaseModel
@@ -29,16 +30,27 @@ class LanguageModel(BaseModel):
     class Config:
         orm_mode = True
 
-
-class UserModel(BaseModel):
-    id: int
+class UpdateProfileModel(BaseModel):
     first_name: str
     last_name: Optional[str]
+    shortName: Optional[str]
+    gender: Optional[str]
+    dob: Optional[date]
+    birth_time: Optional[str]
+    birth_place: Optional[str]
+    profile_image: Optional[str]
+    
+    class Config:
+        orm_mode = True
+
+    
+
+class UserModel(UpdateProfileModel):
+    id: int
     country: str
-    email: str
     phone: str = None
+    email: str
     role_id: int = None
-    profile_image: str = None
     role: RoleModel
     languages: List[LanguageModel]
 
