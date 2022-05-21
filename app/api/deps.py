@@ -17,6 +17,39 @@ get_db = database.get_db
 
 oauth2 = JWTBearer()
 
+# check user
+def check_user(country_code, mobile, db: Session = Depends(get_db)):
+    status = False
+    user = (
+        db.query(models.User)
+        .filter(models.User.country == country_code, models.User.phone == mobile)
+        .first()
+    )
+    if user:
+        status = user
+
+    return status
+
+
+# check user
+def check_email(email, db: Session = Depends(get_db)):
+    status = False
+    user = db.query(models.User).filter(models.User.email == email).first()
+    if user:
+        status = user
+
+    return status
+
+
+def unique_user_validation(country_code, mobile, email, db: Session = Depends(get_db)):
+    user = check_user(country_code, mobile, db)
+    if user:
+        raise HTTPException(status_code=422, detail="Phone number already in exists")
+    user = check_email(email, db)
+    if user:
+        raise HTTPException(status_code=422, detail="Email already in exists")
+    return True
+
 
 def get_current_user(
     db: Session = Depends(get_db),
@@ -32,10 +65,8 @@ def store_user(
     item: List,
     db: Session = Depends(get_db),
 ) -> Any:
-    last_name =  item["last_name"][0] if not item["last_name"] is None else ""
-    short_name = (
-        item["first_name"][0] + last_name
-    ).strip()
+    last_name = item["last_name"][0] if not item["last_name"] is None else ""
+    short_name = (item["first_name"][0] + last_name).strip()
     user = models.User(
         country=item["country_code"],
         phone=item["mobile"],
@@ -51,19 +82,33 @@ def store_user(
     return user
 
 
-def update_user(
-    id: int,
+def store_astrologer(
     item: List,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ) -> Any:
+    user = store_user(item, db)
 
-    last_name =  item.last_name[0] if not item.last_name is None else ""
-    short_name = (
-        item.first_name[0] + last_name
-    ).strip()
+    if user.id:
+        astrologer = models.Astrologer(
+            user_id=user.id,
+            experience=item["experience"],
+            about=item["about"],
+            status=0,
+            # rating = item["rating"],
+            # rating_count = item["rating_count"]
+        )
+        db.add(astrologer)
+        db.commit()
+        db.refresh(astrologer)
+        return astrologer
+
+
+def update_user(id: int, item: List, db: Session = Depends(get_db)) -> Any:
+
+    last_name = item.last_name[0] if not item.last_name is None else ""
+    short_name = (item.first_name[0] + last_name).strip()
 
     user = db.query(models.User).filter(models.User.id == id).first()
-
 
     user.first_name = item.first_name
     user.last_name = item.last_name

@@ -3,6 +3,7 @@ from sqlalchemy import (
     Column,
     ForeignKey,
     Integer,
+    SmallInteger,
     String,
     Table,
     DateTime,
@@ -145,6 +146,7 @@ class Astrologer(Base):
     rating_count = Column(Integer)
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
+    status = Column(SmallInteger)
     # relationship
     # user = relationship("User", foreign_keys="user_id")
     # role = relationship("Role", foreign_keys=[role_id])

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
-from api.deps import RoleChecker, update_user
+from api.deps import RoleChecker, check_user, update_user
 from core.auth.auth_bearer import JWTBearer, signJWT, decodeJWT
 import database, models
 from schema.auth import AuthModel, LoginModel, RegisterModel
@@ -53,20 +53,6 @@ def sendsms(country_code, mobile):
     # data = r.json()
 
     return otp
-
-
-# check user
-def check_user(country_code, mobile, db: Session = Depends(get_db)):
-    status = False
-    user = (
-        db.query(models.User)
-        .filter(models.User.country == country_code, models.User.phone == mobile)
-        .first()
-    )
-    if user:
-        status = user
-
-    return status
 
 
 def otp_user(user_id: int, otp: int, db: Session = Depends(get_db)):
