@@ -1,8 +1,11 @@
-from typing import Optional, List
-from fastapi import APIRouter, Depends
+from typing import Any, Optional, List
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi_pagination import paginate, Page
 from sqlalchemy.orm import Session, selectinload
-from api.deps import RoleChecker, store_astrologer, unique_user_validation
+from api.deps import RoleChecker, store_astrologer
+from api.api_v1.endpoints.user import StatusEnum
+from core.validation import unique_user_validation
+
 # from api.deps import get_current_active_user
 from schema.user import AstroModel, RouteInAccessModel, RouteAccessModel
 import database, models
@@ -27,14 +30,18 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-
 def authuneticate_user(email, password, db: Session = Depends(get_db)):
     status = False
-    user = db.query(models.User).filter(models.User.email == email).options(selectinload(models.User.role)).first()
-    if(user):
+    user = (
+        db.query(models.User)
+        .filter(models.User.email == email)
+        .options(selectinload(models.User.role))
+        .first()
+    )
+    if user:
         # if verify_password(password, user.password):
         status = user
-    
+
     return status
 
 
@@ -46,11 +53,12 @@ def admin_login(item: AdminLoginModel, db: Session = Depends(get_db)):
     return {"detail": user, "token": signJWT(user.id)}
 
 
-
-
-
 @router.post("/create-astrologer", response_model=AstroModel)
-def create_astrologer(item: CreateAstrologerModel, current_user = Depends(allowed_roles), db: Session = Depends(get_db)):
+def create_astrologer(
+    item: CreateAstrologerModel,
+    current_user=Depends(allowed_roles),
+    db: Session = Depends(get_db),
+):
     """create astrologer from admin panel
 
     Args:
@@ -65,18 +73,46 @@ def create_astrologer(item: CreateAstrologerModel, current_user = Depends(allowe
     itemData = item.dict()
     itemData["role_id"] = 3
     astrologer = store_astrologer(itemData, db)
-    user = db.query(models.User, models.Astrologer).\
-                join(models.Astrologer, models.User.id == models.Astrologer.user_id).\
-                filter(models.Astrologer.id == astrologer.id).first()
+    user = (
+        db.query(models.User, models.Astrologer)
+        .join(models.Astrologer, models.User.id == models.Astrologer.user_id)
+        .filter(models.Astrologer.id == astrologer.id)
+        .first()
+    )
     return user
- 
 
 
+@router.put("/change-astrologer-status/{astrologerId}/{astrologer_status}")
+def block_astrologer(
+    astrologerId: int,
+    astrologer_status: StatusEnum,
+    current_user=Depends(allowed_roles),
+    db: Session = Depends(get_db),
+) -> Any:
+    """block astrologer from admin panel. Astrologer can login, but not visible from user panel, can't take calls.
 
+    Args:
+        astrologerId (int): astrologerId
+        astrologer_status (StatusEnum): 1=> active, 0=>inactive, 2=> block
+        current_user (_type_, optional): _description_. Defaults to Depends(allowed_roles).
+        db (Session, optional): _description_. Defaults to Depends(get_db).
 
+    Raises:
+        HTTPException: raise 404 exception when invalid astrologerId
 
-
-
+    Returns:
+        Any: astrologer models 
+    """    
+    astrologer = (
+        db.query(models.Astrologer).filter(models.Astrologer.id == astrologerId).first()
+    )
+    if astrologer:
+        astrologer.status = astrologer_status
+        db.commit()
+        db.refresh(astrologer)
+        return astrologer
+    else:
+        raise HTTPException(status_code=404, detail="Astrologer not found")
 
 
 """uncomment below route when you want to dynamic database managed role based access control. """
@@ -94,8 +130,5 @@ def create_astrologer(item: CreateAstrologerModel, current_user = Depends(allowe
 #         db.add(row)
 #         db.commit()
 #         db.refresh(row)
-    
+
 #     return row
-
-
-

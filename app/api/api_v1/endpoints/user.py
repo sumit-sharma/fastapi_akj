@@ -30,6 +30,7 @@ def fetch_user_rating(user_id, db: Session = Depends(get_db)):
 class StatusEnum(str, Enum):
     active = 1
     inactive = 0
+    block = 2
 
 
 @router.get("/astrologer", response_model=Page[AstroModel])
