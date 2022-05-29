@@ -43,17 +43,16 @@ class Role(Base):
 
 class OauthAccessToken(Base):
     __tablename__ = "oauth_access_tokens"
-    id = Column(String(100))
-    user_id = Column(Integer, ForeignKey("users.id"))
+    id = Column(String(100), primary_key=True)
+    user_id = Column(BIGINT(unsigned=True), ForeignKey("users.id"))
+    name = Column(String(255))
     scopes = Column(Text)
     revoked = Column(Boolean)
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
-    expires_at = Column(DateTime, default=datetime.datetime.now())
+    expires_at = Column(DateTime)
 
     # Relationships
-    # language = relationship("Language", foreign_keys=[language_id])
-    language = relationship("Language", foreign_keys=[language_id])
     user = relationship("User", foreign_keys=[user_id])
 
 class User(Base):

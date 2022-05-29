@@ -90,7 +90,7 @@ def send_otp(item: AuthModel, db: Session = Depends(get_db)):
 def login_access_token(item: LoginModel, db: Session = Depends(get_db)):
     user = check_user(item.country_code, item.mobile, db)
     if otp_user(user.id, item.otp, db):
-        return {"token": signJWT(user.id), "detail": user}
+        return {"token": signJWT(user.id, db), "detail": user}
     else:
         return JSONResponse(
             status_code=403, content={"message": "Invalid otp or it has been expired"}
