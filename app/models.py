@@ -1,5 +1,6 @@
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     Column,
     ForeignKey,
     Integer,
@@ -9,7 +10,7 @@ from sqlalchemy import (
     DateTime,
     Text,
     Float,
-    Date
+    Date,
 )
 from sqlalchemy.orm import relationship
 from database import Base, engine
@@ -39,6 +40,21 @@ class Role(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
 
+
+class OauthAccessToken(Base):
+    __tablename__ = "oauth_access_tokens"
+    id = Column(String(100))
+    user_id = Column(Integer, ForeignKey("users.id"))
+    scopes = Column(Text)
+    revoked = Column(Boolean)
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+    expires_at = Column(DateTime, default=datetime.datetime.now())
+
+    # Relationships
+    # language = relationship("Language", foreign_keys=[language_id])
+    language = relationship("Language", foreign_keys=[language_id])
+    user = relationship("User", foreign_keys=[user_id])
 
 class User(Base):
     __tablename__ = "users"
@@ -180,6 +196,8 @@ class RouteAccess(Base):
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
     role = relationship("Role", foreign_keys=[role_id])
+
+
 
 
 Base.metadata.create_all(bind=engine)

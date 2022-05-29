@@ -7,7 +7,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, OAuth2Pas
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
 import database, models
-
+import secrets
 
 JWT_SECRET = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
 JWT_ALGORITHM = "HS256"
@@ -31,13 +31,16 @@ def token_response(token: str):
     }
 
 
-def signJWT(user_id: str) -> Dict[str, str]:
+def signJWT(user_id: str, db: Session = Depends(get_db)) -> Dict[str, str]:
+    hexToken = secrets.token_hex(16)
     payload = {
         "user_id": user_id,
+        "uid": hexToken,
         "expires": time.time() + (ACCESS_TOKEN_EXPIRE_TIME)
     }
+    
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
-
+    db
     return token_response(token)
 
     
