@@ -48,6 +48,7 @@ def get_current_user(
 ) -> Any:
     # return token
     result = decodeJWT(token)
+    logger.info(result)
     user = db.query(models.User).filter(models.User.id == result["user_id"]).first()
     return user
 
