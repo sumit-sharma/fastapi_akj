@@ -73,6 +73,7 @@ class User(Base):
     phone = Column(String)
     profile_image = Column(String)
     role_id = Column(Integer, ForeignKey("roles.id"))
+    is_blocked = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
     

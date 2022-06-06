@@ -88,7 +88,7 @@ def avg_rate(user_id, save=False, db: Session = Depends(get_db)):
 @router.post("/rate-astrologer")
 def rate_astrologer(
     item: RatingInModel,
-    token: str = Depends(JWTBearer(["admin"])),
+    token: str = Depends(JWTBearer()),
     db: Session = Depends(get_db),
 ):
     authtoken = decodeJWT(token)

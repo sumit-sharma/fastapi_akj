@@ -131,3 +131,33 @@ def update_profile(
     current_user=Depends(allowed_roles),
 ) -> Any:
     return update_user(current_user.id, item, db)
+
+
+@router.get("/user/me", name="myprofile", response_model=UserModel)
+def user_profile(
+    db: Session = Depends(get_db), current_user=Depends(allowed_roles)
+) -> Any:
+    return current_user
+
+
+@router.get("/logout", name="logout")
+def logout(
+    token: str = Depends(JWTBearer()),
+    db: Session = Depends(get_db)
+) -> Any:
+    result = decodeJWT(token)
+    uid =  ""
+    if "uid" in result.keys():
+        uid =  result["uid"]
+     
+    OauthAccess = (
+        db.query(models.OauthAccessToken)
+        .filter(models.OauthAccessToken.id == uid)
+        .first()
+    )
+    if OauthAccess:
+        OauthAccess.revoked = 1
+        db.commit()
+        db.refresh(OauthAccess)
+    return {"detail": "success"}
+

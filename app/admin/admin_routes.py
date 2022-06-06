@@ -50,7 +50,7 @@ def authuneticate_user(email, password, db: Session = Depends(get_db)):
 def admin_login(item: AdminLoginModel, db: Session = Depends(get_db)):
     # return {"password" : item.password, "hashed_password": get_password_hash(item.password)}
     user = authuneticate_user(item.email, item.password, db)
-    return {"detail": user, "token": signJWT(user.id)}
+    return {"detail": user, "token": signJWT(user.id, db)}
 
 
 @router.post("/create-astrologer", response_model=AstroModel)
@@ -101,8 +101,8 @@ def block_astrologer(
         HTTPException: raise 404 exception when invalid astrologerId
 
     Returns:
-        Any: astrologer models 
-    """    
+        Any: astrologer models
+    """
     astrologer = (
         db.query(models.Astrologer).filter(models.Astrologer.id == astrologerId).first()
     )
@@ -132,3 +132,29 @@ def block_astrologer(
 #         db.refresh(row)
 
 #     return row
+
+
+@router.put("/toggle-block-user/{user_id}")
+def toggle_block_user(
+    user_id: int, db: Session = Depends(get_db), current_user=Depends(allowed_roles)
+) -> models.User:
+    """Toggle user to block/unblock action
+
+    Args:
+        user_id (int): _description_
+        db (Session, optional): _description_. Defaults to Depends(get_db).
+        current_user (_type_, optional): _description_. Defaults to Depends(allowed_roles).
+
+    Returns:
+        models.User: user
+    """
+    try: 
+        user = db.query(models.User).filter(models.User.id == user_id).first()
+        if user:
+            user.is_blocked = not user.is_blocked
+            db.commit()
+            db.refresh(user)
+            return user
+        raise HTTPException(status_code=404, detail="User not found")
+    except:
+        raise HTTPException(status_code=404, detail="User not found")

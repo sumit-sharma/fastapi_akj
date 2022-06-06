@@ -41,16 +41,26 @@ def check_email(email, db: Session = Depends(get_db)):
     return status
 
 
-
 def get_current_user(
     db: Session = Depends(get_db),
     token: str = Depends(oauth2),
 ) -> Any:
     # return token
     result = decodeJWT(token)
-    logger.info(result)
-    user = db.query(models.User).filter(models.User.id == result["user_id"]).first()
-    return user
+    uid =  ""
+    if "uid" in result.keys():
+        uid =  result["uid"]
+    oauthToken = (
+        db.query(models.OauthAccessToken)
+        .filter(models.OauthAccessToken.id == uid)
+        .filter(models.OauthAccessToken.revoked == 0)
+        .first()
+    )
+    if oauthToken:
+        user = db.query(models.User).filter(models.User.id == result["user_id"]).first()
+        return user
+    else:
+        raise HTTPException(status_code=403, detail="Invalid token or expired token.")
 
 
 def store_user(
