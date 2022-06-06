@@ -7,7 +7,7 @@ from api.api_v1.endpoints.user import StatusEnum
 from core.validation import unique_user_validation
 
 # from api.deps import get_current_active_user
-from schema.user import AstroModel, RouteInAccessModel, RouteAccessModel
+from schema.user import AstroModel, RouteInAccessModel, RouteAccessModel, UserModel
 import database, models
 from core.auth.auth_bearer import signJWT
 from schema.auth import AdminLoginModel, CreateAstrologerModel, CreateCategoryModel
@@ -134,7 +134,7 @@ def block_astrologer(
 #     return row
 
 
-@router.put("/toggle-block-user/{user_id}")
+@router.put("/toggle-block-user/{user_id}", response_model=UserModel)
 def toggle_block_user(
     user_id: int, db: Session = Depends(get_db), current_user=Depends(allowed_roles)
 ) -> models.User:
@@ -151,9 +151,12 @@ def toggle_block_user(
     try: 
         user = db.query(models.User).filter(models.User.id == user_id).first()
         if user:
+            db.query(models.OauthAccessToken).filter(models.OauthAccessToken.user_id == user_id).update({"revoked": 1})
             user.is_blocked = not user.is_blocked
             db.commit()
             db.refresh(user)
+            
+            
             return user
         raise HTTPException(status_code=404, detail="User not found")
     except:

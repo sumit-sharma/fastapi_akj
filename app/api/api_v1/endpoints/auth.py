@@ -75,6 +75,9 @@ def send_otp(item: AuthModel, db: Session = Depends(get_db)):
     otp = sendsms(item.country_code, item.mobile)
     user = check_user(item.country_code, item.mobile, db)
     if user:
+        if user.is_blocked:
+            raise HTTPException(status_code=403, detail="You have been blocked by administrator.")
+      
         row = models.AccountOtp(otp=otp, user_id=user.id)
         db.add(row)
         db.commit()

@@ -53,7 +53,7 @@ class UserModel(UpdateProfileModel):
     role_id: int = None
     role: RoleModel
     languages: List[LanguageModel]
-
+    is_blocked: bool
     class Config:
         orm_mode = True
 
