@@ -23,6 +23,7 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "https://api.aapkajyotish.com",
+    "https://aapkajyotish.com",
 ]
 
 app.add_middleware(
