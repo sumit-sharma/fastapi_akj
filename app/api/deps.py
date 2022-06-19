@@ -77,6 +77,7 @@ def store_user(
         email=item["email"],
         role_id=item["role_id"],
         shortName=short_name,
+        dob=item["dob"],
     )
     db.add(user)
     db.commit()
