@@ -8,7 +8,6 @@ import database, models
 from fastapi_pagination import Page, paginate
 from schema.misc import CreateLanguageModel, PageModel, EditPageModel
 
-
 router = APIRouter()
 
 get_db = database.get_db
@@ -23,6 +22,7 @@ def fetch_page_list(db: Session = Depends(get_db)):
 class pageEnum(str, Enum):
     terms = "terms"
     privacy = "privacy"
+    faq_user = "faq-user"
 
 
 @router.get("/page/{slug}", response_model=PageModel)

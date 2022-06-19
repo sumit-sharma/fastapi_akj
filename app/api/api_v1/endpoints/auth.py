@@ -76,8 +76,10 @@ def send_otp(item: AuthModel, db: Session = Depends(get_db)):
     user = check_user(item.country_code, item.mobile, db)
     if user:
         if user.is_blocked:
-            raise HTTPException(status_code=403, detail="You have been blocked by administrator.")
-      
+            raise HTTPException(
+                status_code=403, detail="You have been blocked by administrator."
+            )
+
         row = models.AccountOtp(otp=otp, user_id=user.id)
         db.add(row)
         db.commit()
@@ -136,23 +138,24 @@ def update_profile(
     return update_user(current_user.id, item, db)
 
 
-@router.get("/user/me", name="myprofile", response_model=UserModel)
+@router.get("/user/{user_id}", name="myprofile", response_model=UserModel)
 def user_profile(
-    db: Session = Depends(get_db), current_user=Depends(allowed_roles)
+    user_id: int, db: Session = Depends(get_db), current_user=Depends(allowed_roles)
 ) -> Any:
-    return current_user
+    user = db.query(models.User).filter(models.User.id == user_id).first()
+    if user:
+        return user
+    
+    return JSONResponse(status_code=404, content={"message": "user not found"})
 
 
 @router.get("/logout", name="logout")
-def logout(
-    token: str = Depends(JWTBearer()),
-    db: Session = Depends(get_db)
-) -> Any:
+def logout(token: str = Depends(JWTBearer()), db: Session = Depends(get_db)) -> Any:
     result = decodeJWT(token)
-    uid =  ""
+    uid = ""
     if "uid" in result.keys():
-        uid =  result["uid"]
-     
+        uid = result["uid"]
+
     OauthAccess = (
         db.query(models.OauthAccessToken)
         .filter(models.OauthAccessToken.id == uid)
@@ -163,4 +166,3 @@ def logout(
         db.commit()
         db.refresh(OauthAccess)
     return {"detail": "success"}
-

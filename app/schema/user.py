@@ -1,4 +1,5 @@
 from datetime import date
+import json
 from typing import Optional, List
 
 from pydantic import BaseModel
@@ -99,3 +100,16 @@ class RouteAccessModel(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class CreateOrderModel(BaseModel):
+    amount: str
+    currency: str = "INR"
+    receipt: str
+    notes: str
+    attempts: int = 0
+
+    class Config:
+        orm_mode = True
+
+

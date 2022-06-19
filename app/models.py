@@ -1,5 +1,6 @@
 from sqlalchemy import (
-    BigInteger,
+    FLOAT,
+    JSON,
     Boolean,
     Column,
     ForeignKey,
@@ -55,6 +56,7 @@ class OauthAccessToken(Base):
     # Relationships
     user = relationship("User", foreign_keys=[user_id])
 
+
 class User(Base):
     __tablename__ = "users"
 
@@ -76,13 +78,11 @@ class User(Base):
     is_blocked = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
-    
-    
+
     # Relationships
     role = relationship("Role", foreign_keys=[role_id])
 
     languages = relationship("Language", secondary="language_user", backref="users")
-    
 
     # def __repr__(self):
     #     return "<User %r>" % self.role
@@ -101,7 +101,7 @@ class AccountOtp(Base):
 
 class Page(Base):
     __tablename__ = "pages"
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(225))
     slug = Column(String(225))
@@ -116,7 +116,7 @@ class Page(Base):
 
 class Language(Base):
     __tablename__ = "languages"
-    
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(225))
     created_at = Column(DateTime, default=datetime.datetime.now())
@@ -198,6 +198,45 @@ class RouteAccess(Base):
     role = relationship("Role", foreign_keys=[role_id])
 
 
+# razor pay customer
+class PaymentCustomer(Base):
+    __tablename__ = "payment_customers"
+    id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+    user_id = Column(BIGINT(unsigned=True), ForeignKey("users.id"))
+    cust_id = Column(String(225))
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+    user = relationship("User", foreign_keys=[user_id])
+
+
+class PaymentOrder(Base):
+    __tablename__ = "orders"
+    id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+    amount = Column(FLOAT)
+    currency = Column(String(255), default="INR")
+    receipt = Column(String(255), comment="transaction_uid on transaction")
+    notes = Column(JSON)
+    attempts = Column(Integer, default=0)
+    status = Column(String(255), default="init")
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+    id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+    transaction_uid = Column(String(225))
+    customer_id = Column(BIGINT(unsigned=True), ForeignKey("payment_customers.id"))
+    order_id = Column(BIGINT(unsigned=True), ForeignKey("orders.id"))
+    amount = Column(FLOAT)
+    currency = Column(String(255), default="INR")
+    response = Column(JSON)
+    status = Column(String(255), default="init")
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+
+    role = relationship("PaymentCustomer", foreign_keys=[customer_id])
+    role = relationship("PaymentOrder", foreign_keys=[order_id])
 
 
 Base.metadata.create_all(bind=engine)
