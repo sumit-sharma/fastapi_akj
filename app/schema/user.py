@@ -106,7 +106,7 @@ class CreateOrderModel(BaseModel):
     amount: str
     currency: str = "INR"
     receipt: str
-    notes: str
+    notes: dict
     attempts: int = 0
 
     class Config:
