@@ -212,14 +212,19 @@ class PaymentCustomer(Base):
 class PaymentOrder(Base):
     __tablename__ = "orders"
     id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+    user_id = Column(BIGINT(unsigned=True), ForeignKey("users.id"))
+    entity_id = Column(String(255), comment="order ID after creation, src: razorpay response")
     amount = Column(FLOAT)
     currency = Column(String(255), default="INR")
     receipt = Column(String(255), comment="transaction_uid on transaction")
+    offer_id = Column(String(255))
     notes = Column(JSON)
     attempts = Column(Integer, default=0)
     status = Column(String(255), default="init")
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
+    
+    user = relationship("User", foreign_keys=[user_id])
 
 
 class Transaction(Base):

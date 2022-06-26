@@ -2,7 +2,7 @@ from datetime import date
 import json
 from typing import Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CategoriesModel(BaseModel):
@@ -60,6 +60,7 @@ class UserModel(UpdateProfileModel):
 
 
 class AstrologerModel(BaseModel):
+    id: Optional[int] = Field(..., alias='astrologer_id')
     experience: Optional[str]
     about: Optional[str]
     rating: Optional[float] = None
@@ -69,6 +70,8 @@ class AstrologerModel(BaseModel):
 
     class Config:
         orm_mode = True
+        allow_population_by_field_name = True
+
 
 
 class AstroModel(BaseModel):
@@ -105,8 +108,9 @@ class RouteAccessModel(BaseModel):
 class CreateOrderModel(BaseModel):
     amount: str
     currency: str = "INR"
-    receipt: str
-    notes: dict
+    helptext: Optional[str]
+    # receipt: str
+    # notes: dict
     attempts: int = 0
 
     class Config:

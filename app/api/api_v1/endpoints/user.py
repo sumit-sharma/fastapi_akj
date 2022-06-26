@@ -118,3 +118,19 @@ def rate_astrologer(
     """ save updated  to astrologer table
     """
     return avg_rate(item.user_id, True, db)
+
+
+@router.get("/astrologer-detail/{astrologer_id}", response_model=AstroModel)
+def astrologer_detail(
+    astrologer_id: int,
+    db: Session = Depends(get_db),
+):
+    return (
+        db.query(models.User, models.Astrologer)
+        .join(models.Astrologer, models.User.id == models.Astrologer.user_id)
+        .filter(models.Astrologer.id == astrologer_id)
+        .first()
+    )
+
+
+

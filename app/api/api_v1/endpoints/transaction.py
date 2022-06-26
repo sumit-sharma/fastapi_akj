@@ -1,6 +1,6 @@
 import datetime
 from enum import Enum
-import secrets
+import uuid
 import api.api_v1.endpoints
 from fastapi.responses import JSONResponse
 from typing import Optional, List, Union
@@ -22,8 +22,8 @@ allowed_roles = RoleChecker(["user", "admin"])
 
 
 def get_customer_id(user_id, db):
-    return db.query(models.PaymentCustomer).filter (user_id == user_id).first()
-    
+    return db.query(models.PaymentCustomer).filter(user_id == user_id).first()
+
 
 @router.post("/create-customer")
 def create_customer(user=Depends(allowed_roles), db: Session = Depends(get_db)):
@@ -35,9 +35,13 @@ def create_customer(user=Depends(allowed_roles), db: Session = Depends(get_db)):
 
     Returns:
         JSON: _description_
-    """    
+    """
     try:
-        customer = db.query(models.PaymentCustomer).filter(models.PaymentCustomer.user_id == user.id).first()
+        customer = (
+            db.query(models.PaymentCustomer)
+            .filter(models.PaymentCustomer.user_id == user.id)
+            .first()
+        )
         if customer:
             cust_id = customer.cust_id
         else:
@@ -66,7 +70,7 @@ def create_customer(user=Depends(allowed_roles), db: Session = Depends(get_db)):
                 db.refresh(row)
         if cust_id:
             return JSONResponse(
-                status_code=200, content={"detail": "cutsomer Id: "+cust_id}
+                status_code=200, content={"detail": "cutsomer Id: " + cust_id}
             )
         return JSONResponse(
             status_code=400, content={"detail": "some error occurred, please try later"}
@@ -76,21 +80,32 @@ def create_customer(user=Depends(allowed_roles), db: Session = Depends(get_db)):
         print(msg)
         return JSONResponse(status_code=422, content={"detail": msg})
 
-@router.post("/create-order")
-def create_order(item: CreateOrderModel, current_user=Depends(allowed_roles), db: Session = Depends(get_db)):
-    try:
-        return item
-        client = razorpay.Client(auth=(razor_key, razor_secret))
-        res = client.order.create({
-            "amount": item.amount,
-            "currency": "INR",
-            "receipt": secrets.token_hex(16),
-            "notes": {
-            "customer_id": get_customer_id(current_user.id, db),
-            }
-        })
 
-        return res
+@router.post("/create-order")
+def create_order(
+    item: CreateOrderModel,
+    current_user=Depends(allowed_roles),
+    db: Session = Depends(get_db),
+):
+    try:
+        # return get_customer_id(current_user.id, db)
+        
+        # print(type(uuid.uuid4()))
+        
+        client = razorpay.Client(auth=(razor_key, razor_secret))
+        res = client.order.create(
+            {
+                "amount": item.amount,
+                "currency": "INR",
+                "receipt": str(uuid.uuid4()),
+                "notes": {
+                    "customer_id": get_customer_id(current_user.id, db).cust_id,
+                }
+            }
+        )
+
+        # return res
+
         if res:
             # amount = Column(FLOAT)
             # currency = Column(String(255), default="INR")
@@ -98,13 +113,23 @@ def create_order(item: CreateOrderModel, current_user=Depends(allowed_roles), db
             # notes = Column(JSON)
             # attempts = Column(Integer, default=0)
             # status = Column(String(255), default="init")
-        
-            row = models.PaymentOrder(cust_id=res["id"], user_id=user.id)
+
+            row = models.PaymentOrder(
+                user_id = current_user.id,
+                entity_id=res["id"],
+                amount = res["amount"],
+                currency=res["currency"],
+                receipt = res["receipt"],
+                offer_id = res["offer_id"],
+                notes = res["notes"],
+                attempts = res["attempts"], 
+                status = res["status"]
+                )
             db.add(row)
             db.commit()
             db.refresh(row)
             return JSONResponse(
-                status_code=200, content={"detail": "cutsomer Id saved"}
+                status_code=200, content={"detail": row}
             )
         return JSONResponse(
             status_code=400, content={"detail": "some error occurred, please try later"}
@@ -113,4 +138,3 @@ def create_order(item: CreateOrderModel, current_user=Depends(allowed_roles), db
         msg = getattr(ex, "message", str(ex))
         print(msg)
         return JSONResponse(status_code=422, content={"detail": msg})
-

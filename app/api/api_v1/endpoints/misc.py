@@ -14,15 +14,18 @@ get_db = database.get_db
 
 
 # def fetch_categories(page: Optional[int] = 0, limits: Optional[int] = 1,  db: Session = Depends(get_db)):
-@router.get("/page", response_model=Page[PageModel])
-def fetch_page_list(db: Session = Depends(get_db)):
-    return paginate(db.query(models.Page).all())
+# @router.get("/page", response_model=Page[PageModel])
+# def fetch_page_list(db: Session = Depends(get_db)):
+#     return paginate(db.query(models.Page).all())
 
 
 class pageEnum(str, Enum):
     terms = "terms"
     privacy = "privacy"
     faq_user = "faq-user"
+    about = "about"
+    shipping = "shipping"
+    refund = "refund"
 
 
 @router.get("/page/{slug}", response_model=PageModel)
