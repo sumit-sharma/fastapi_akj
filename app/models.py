@@ -29,17 +29,17 @@ class Category(Base):
     __tablename__ = "categories"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    slug = Column(String)
-    image_url = Column(String)
-    description = Column(String)
+    name = Column(String(225))
+    slug = Column(String(225))
+    image_url = Column(String(225))
+    description = Column(String(225))
 
 
 class Role(Base):
     __tablename__ = "roles"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String(225))
 
 
 class OauthAccessToken(Base):
@@ -61,19 +61,19 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
-    # username = Column(String)
-    password = Column(String)
-    first_name = Column(String)
-    last_name = Column(String)
-    shortName = Column(String)
-    gender = Column(String)
+    # username = Column(String(225))
+    password = Column(String(225))
+    first_name = Column(String(225))
+    last_name = Column(String(225))
+    shortName = Column(String(225))
+    gender = Column(String(225))
     dob = Column(Date)
-    birth_time = Column(String)
-    birth_place = Column(String)
-    email = Column(String)
-    country = Column(String)
-    phone = Column(String)
-    profile_image = Column(String)
+    birth_time = Column(String(225))
+    birth_place = Column(String(225))
+    email = Column(String(225))
+    country = Column(String(225))
+    phone = Column(String(225))
+    profile_image = Column(String(225))
     role_id = Column(Integer, ForeignKey("roles.id"))
     is_blocked = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.now())
@@ -213,7 +213,9 @@ class PaymentOrder(Base):
     __tablename__ = "orders"
     id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
     user_id = Column(BIGINT(unsigned=True), ForeignKey("users.id"))
-    entity_id = Column(String(255), comment="order ID after creation, src: razorpay response")
+    entity_id = Column(
+        String(255), comment="order ID after creation, src: razorpay response"
+    )
     amount = Column(FLOAT)
     currency = Column(String(255), default="INR")
     receipt = Column(String(255), comment="transaction_uid on transaction")
@@ -223,7 +225,7 @@ class PaymentOrder(Base):
     status = Column(String(255), default="init")
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
-    
+
     user = relationship("User", foreign_keys=[user_id])
 
 
@@ -240,8 +242,20 @@ class Transaction(Base):
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
 
-    role = relationship("PaymentCustomer", foreign_keys=[customer_id])
-    role = relationship("PaymentOrder", foreign_keys=[order_id])
+    customer = relationship("PaymentCustomer", foreign_keys=[customer_id])
+    order = relationship("PaymentOrder", foreign_keys=[order_id])
+
+
+class Testimonial(Base):
+    __tablename__ = "testimonials"
+    id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+    name = Column(String(225))
+    designation = Column(String(225))
+    content = Column(Text)
+    image_url = Column(String(225))
+    status = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
 
 
 Base.metadata.create_all(bind=engine)

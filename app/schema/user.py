@@ -117,3 +117,21 @@ class CreateOrderModel(BaseModel):
         orm_mode = True
 
 
+class TestimonialModel(BaseModel):
+    id: Optional[int]
+    name: str
+    designation: str
+    content: str
+    image_url: str
+    class Config:
+        orm_mode = True
+
+
+class InputTestimonialModel(BaseModel):
+    name: str
+    designation: str
+    content: str
+    image_url: str
+    class Config:
+        orm_mode = True
+
