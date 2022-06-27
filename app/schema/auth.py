@@ -18,7 +18,7 @@ class LoginModel(AuthModel):
 class RegisterModel(AuthModel):
     first_name: str
     last_name: str
-    email: str
+    email: Optional[str]
     dob: Optional[date]
 
 
