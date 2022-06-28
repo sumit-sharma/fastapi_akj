@@ -258,4 +258,20 @@ class Testimonial(Base):
     updated_at = Column(DateTime, default=datetime.datetime.now())
 
 
+class Blog(Base):
+    __tablename__ = "blogs"
+    id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+    name = Column(String(225))
+    slug = Column(String(225))
+    image_url = Column(String(225))
+    content = Column(Text)
+    is_published = Column(Boolean, default=0)
+    created_by = Column(BIGINT(unsigned=True), ForeignKey("users.id"))
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+    user = relationship("User", foreign_keys=[created_by])
+    
+    
+
+
 Base.metadata.create_all(bind=engine)

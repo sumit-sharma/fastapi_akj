@@ -135,3 +135,15 @@ class InputTestimonialModel(BaseModel):
     class Config:
         orm_mode = True
 
+
+class InputBlogModel(BaseModel):
+    name: str
+    image_url: Optional[str]
+    content: Optional[str]
+    class Config:
+        orm_mode = True
+    
+class BlogModel(InputBlogModel):
+        id: Optional[int]
+        slug: str
+
