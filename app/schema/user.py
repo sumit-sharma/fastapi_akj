@@ -65,7 +65,7 @@ class AstrologerModel(BaseModel):
     about: Optional[str]
     rating: Optional[float] = None
     rating_count: Optional[int] = None
-
+    price: Optional[int]
     category: List[CategoriesModel]
 
     class Config:
@@ -140,10 +140,13 @@ class InputBlogModel(BaseModel):
     name: str
     image_url: Optional[str]
     content: Optional[str]
+    category_id: Optional[str]
     class Config:
         orm_mode = True
     
 class BlogModel(InputBlogModel):
         id: Optional[int]
         slug: str
+        popularity = str
+        trending = str
 

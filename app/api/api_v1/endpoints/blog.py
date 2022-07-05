@@ -51,13 +51,14 @@ def create_blog(
     db: Session = Depends(get_db),
     current_user=Depends(allowed_roles),
 ):
-
     blog = models.Blog(
         name=item.name,
         slug=slugify(item.name),
         content=item.content,
         image_url=item.image_url,
+        category_id=item.category_id,
         created_by=current_user.id,
+        
     )
     db.add(blog)
     db.commit()
@@ -93,3 +94,14 @@ def delete_blog(
     db.delete(blog)
     db.commit()
     return JSONResponse(status_code=200, content={"detail": "blog has been deleted."})
+
+@router.post("/blog/increase_popularity")
+def blog_increase_popularity(
+    blog_id: int,
+    db: Session = Depends(get_db)
+):
+    blog = check_blog(blog_id, db)
+    blog.popularity = blog.popularity + 1
+    blog.commit()
+    return JSONResponse(status_code=200, content={"detail": "popularity has been updated."})
+

@@ -16,7 +16,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from database import Base, engine
 import datetime
-from sqlalchemy.dialects.mysql import BIGINT, SMALLINT
+from sqlalchemy.dialects.mysql import BIGINT, SMALLINT, INTEGER
 
 # group = Table('users_groups', Base.metadata,
 #     # id = Column(Integer, primary_key=True, index=True)
@@ -160,6 +160,7 @@ class Astrologer(Base):
     about = Column(Text)
     rating = Column(Float)
     rating_count = Column(Integer)
+    price = Column(INTEGER(unsigned=True), default=10)
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
     status = Column(SmallInteger)
@@ -265,13 +266,18 @@ class Blog(Base):
     slug = Column(String(225))
     image_url = Column(String(225))
     content = Column(Text)
+    category_id = Column(BIGINT(unsigned=True), ForeignKey("categories.id"))
     is_published = Column(Boolean, default=0)
+    popularity = Column(Integer, default="1")
+    trending = Column(Boolean, default=True)
     created_by = Column(BIGINT(unsigned=True), ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
+    # Relationships
+    category = relationship("Category", foreign_keys=[category_id])    
     user = relationship("User", foreign_keys=[created_by])
     
-    
+
 
 
 Base.metadata.create_all(bind=engine)
