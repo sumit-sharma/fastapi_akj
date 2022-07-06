@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from api.api_v1.endpoints import auth, user, category, misc, transaction, testimonial, blog
+from api.api_v1.endpoints import auth, user, category, misc, transaction, testimonial, blog, horoscope
 
 api_router = APIRouter()
 
@@ -17,4 +17,6 @@ api_router.include_router(transaction.router, tags=["transactions"])
 api_router.include_router(testimonial.router, tags=["testimonials"])
 
 api_router.include_router(blog.router, tags=["news"])
+
+api_router.include_router(horoscope.router, tags=["horoscope"])
 

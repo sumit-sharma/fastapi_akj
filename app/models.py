@@ -278,6 +278,36 @@ class Blog(Base):
     user = relationship("User", foreign_keys=[created_by])
     
 
+class Sunsign(Base):
+    __tablename__ = "sunsigns"
+    id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+    name = Column(String(225))
+    slug = Column(String(225))
+    image_url = Column(String(225))
+    help_text = Column(String(225))
+    category_id = Column(BIGINT(unsigned=True), ForeignKey("categories.id"))
+    status = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+     # Relationships
+    category = relationship("Category", foreign_keys=[category_id])    
+
+class DailyHoroscope(Base):
+    __tablename__ = "daily_horoscopes"
+    id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+    sunsign_id = Column(BIGINT(unsigned=True), ForeignKey("sunsigns.id"))
+    content = Column(Text)
+    language_id = Column(BIGINT(unsigned=True), ForeignKey("languages.id"))
+    category_id = Column(BIGINT(unsigned=True), ForeignKey("categories.id"))
+    published_date = Column(Date)
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+    # Relationships
+    sunsign = relationship("Sunsign", foreign_keys=[sunsign_id])    
+    language = relationship("Language", foreign_keys=[language_id])
+    category = relationship("Category", foreign_keys=[category_id])    
+    
+
 
 
 Base.metadata.create_all(bind=engine)

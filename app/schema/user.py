@@ -145,8 +145,40 @@ class InputBlogModel(BaseModel):
         orm_mode = True
     
 class BlogModel(InputBlogModel):
-        id: Optional[int]
-        slug: str
-        popularity = str
-        trending = str
+    id: Optional[int]
+    slug: str
+    popularity = str
+    trending = str
+
+class InputSunsignModel(BaseModel):
+    name: str
+    image_url: Optional[str]
+    category_id: int
+    help_text: Optional[str]
+    status: bool
+    class Config:
+        orm_mode = True
+
+class SunsignModel(InputSunsignModel):
+    id: Optional[int]
+    slug: str
+    category: CategoriesModel
+
+class InputDailyHoroscopeModel(BaseModel):
+    sunsign_id: int
+    category_id: int
+    content: str
+    language_id: int
+    published_date: date
+    class Config:
+        orm_mode = True
+
+class DailyHoroscopeModel(InputDailyHoroscopeModel):
+    id: Optional[int]
+    # category: CategoriesModel
+    language: LanguageModel
+    sunsign: SunsignModel
+
+
+
 
