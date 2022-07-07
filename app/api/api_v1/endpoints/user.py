@@ -1,5 +1,6 @@
 import datetime
 from enum import Enum
+from token import OP
 import api.api_v1.endpoints
 from typing import Optional, List, Union
 from fastapi import APIRouter, Depends, Query
@@ -38,6 +39,7 @@ class StatusEnum(str, Enum):
 # def astrologer_list(token: str = Depends(JWTBearer()), db: Session = Depends(get_db)):
 def astrologer_list(
     astrologer_status: StatusEnum = Query(1),
+    search: Optional[str] = Query(None),
     category: Optional[list[int]] = Query(None),
     language: Optional[list[int]] = Query(None),
     db: Session = Depends(get_db),
@@ -57,6 +59,13 @@ def astrologer_list(
         users = users.join(models.LanguageUser).filter(
             models.LanguageUser.language_id.in_(language)
         )
+
+    if search:
+        users = users.filter(
+            models.User.first_name.like("%" + search + "%")
+            | models.User.last_name.like("%" + search + "%")
+        )
+
 
     users = users.all()
     return paginate(users)
@@ -131,6 +140,3 @@ def astrologer_detail(
         .filter(models.Astrologer.id == astrologer_id)
         .first()
     )
-
-
-
