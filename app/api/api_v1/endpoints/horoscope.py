@@ -36,7 +36,9 @@ def fetch_sunsign(sunsign_id: int, db: Session = Depends(get_db)):
 
 @router.get("/daily_horoscope/today", response_model=Page[DailyHoroscopeModel])
 def fetch_horoscopes(
-    category_id: Optional[str] = Query(None), db: Session = Depends(get_db)
+    category_id: Optional[str] = Query(None),
+    sunsign_id: Optional[str] = Query(None), 
+    db: Session = Depends(get_db)
 ):
     today = datetime.today().strftime("%Y-%m-%d")
     horoscope = db.query(models.DailyHoroscope).filter(
@@ -44,6 +46,10 @@ def fetch_horoscopes(
     )
     if category_id:
         horoscope = horoscope.filter(models.DailyHoroscope.category_id == category_id)
+    
+    if sunsign_id:
+        horoscope = horoscope.filter(models.DailyHoroscope.sunsign_id == sunsign_id)
+        
     return paginate(horoscope.all())
 
 
