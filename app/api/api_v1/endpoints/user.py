@@ -5,9 +5,10 @@ import api.api_v1.endpoints
 from typing import Optional, List, Union
 from fastapi import APIRouter, Depends, Query
 from core.auth.auth_bearer import JWTBearer, decodeJWT
-from schema.user import AstrologerModel, RatingInModel, UserModel, AstroModel
+from schema.user import AstroModelWithRateStatics, AstrologerModel, RatingInModel, UserModel, AstroModel
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import text, func
+from sqlalchemy.sql import text, func, case
+from sqlalchemy import inspect
 import database, models
 from fastapi_pagination import Page, paginate
 
@@ -16,15 +17,42 @@ router = APIRouter()
 get_db = database.get_db
 
 
-def fetch_user_rating(user_id, db: Session = Depends(get_db)):
+def fetch_rating_detail(user_id, db: Session = Depends(get_db)):
+    rate_data_detail = (
+        db.query(
+            func.count(case((models.Rating.rate == 1, 1))).label('star_1'),
+            func.count(case((models.Rating.rate == 2, 1))).label('star_2'),
+            func.count(case((models.Rating.rate == 3, 1))).label('star_3'),
+            func.count(case((models.Rating.rate == 4, 1))).label('star_4'),
+            func.count(case((models.Rating.rate == 5, 1))).label('star_5'),
+        )
+        .filter(models.Rating.user_id == user_id)
+        .group_by(models.Rating.user_id)
+        .first()
+    )
+    return rate_data_detail
+
+
+def avg_rate(user_id, save=False, db: Session = Depends(get_db)):
     rate_data = (
         db.query(
             func.count(models.Rating.rate).label("count"),
-            func.ifnull(func.avg(models.Rating.rate), 0),
+            func.ifnull(func.avg(models.Rating.rate), 0).label("avg"),
         )
         .filter(models.Rating.user_id == user_id)
         .first()
     )
+    if save:
+        row = (
+            db.query(models.Astrologer)
+            .filter(models.Astrologer.user_id == user_id)
+            .first()
+        )
+        row.rating = rate_data.avg
+        row.rating_count = rate_data.count
+        row.updated_at = datetime.datetime.now()
+        db.add(row)
+        db.commit()
     return rate_data
 
 
@@ -66,32 +94,8 @@ def astrologer_list(
             | models.User.last_name.like("%" + search + "%")
         )
 
-
     users = users.all()
     return paginate(users)
-
-
-def avg_rate(user_id, save=False, db: Session = Depends(get_db)):
-    rate_data = (
-        db.query(
-            func.count(models.Rating.rate).label("count"),
-            func.ifnull(func.avg(models.Rating.rate), 0).label("avg"),
-        )
-        .filter(models.Rating.user_id == user_id)
-        .first()
-    )
-    if save:
-        row = (
-            db.query(models.Astrologer)
-            .filter(models.Astrologer.user_id == user_id)
-            .first()
-        )
-        row.rating = rate_data.avg
-        row.rating_count = rate_data.count
-        row.updated_at = datetime.datetime.now()
-        db.add(row)
-        db.commit()
-    return rate_data
 
 
 @router.post("/rate-astrologer")
@@ -129,14 +133,22 @@ def rate_astrologer(
     return avg_rate(item.user_id, True, db)
 
 
-@router.get("/astrologer-detail/{astrologer_id}", response_model=AstroModel)
+@router.get("/astrologer-detail/{astrologer_id}", response_model=Union[AstroModelWithRateStatics, AstroModel])
 def astrologer_detail(
     astrologer_id: int,
     db: Session = Depends(get_db),
 ):
-    return (
+    
+    astrologer = (
         db.query(models.User, models.Astrologer)
         .join(models.Astrologer, models.User.id == models.Astrologer.user_id)
         .filter(models.Astrologer.id == astrologer_id)
         .first()
     )
+    # print(type(astrologer) is dict)
+    if astrologer:        
+        astrologer = astrologer._asdict()
+        rating_statics_data = fetch_rating_detail(astrologer["User"].id, db)
+        astrologer["rate_statics"] = rating_statics_data
+    
+    return astrologer

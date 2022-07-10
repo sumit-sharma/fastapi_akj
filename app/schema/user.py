@@ -81,6 +81,19 @@ class AstroModel(BaseModel):
     class Config:
         orm_mode = True
 
+class RateStatics(BaseModel):
+    star_1: int
+    star_2: int
+    star_3: int
+    star_4: int
+    star_5: int
+
+class AstroModelWithRateStatics(AstroModel):
+    rate_statics: RateStatics
+    class Config:
+        orm_mode = True
+     
+
 
 class RatingInModel(BaseModel):
     user_id: int
