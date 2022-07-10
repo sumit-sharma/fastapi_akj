@@ -5,7 +5,14 @@ import api.api_v1.endpoints
 from typing import Optional, List, Union
 from fastapi import APIRouter, Depends, Query
 from core.auth.auth_bearer import JWTBearer, decodeJWT
-from schema.user import AstroModelWithRateStatics, AstrologerModel, RatingInModel, UserModel, AstroModel
+from schema.user import (
+    AstroModelWithRateStatics,
+    AstrologerModel,
+    RatingInModel,
+    RatingOutModel,
+    UserModel,
+    AstroModel,
+)
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import text, func, case
 from sqlalchemy import inspect
@@ -20,11 +27,11 @@ get_db = database.get_db
 def fetch_rating_detail(user_id, db: Session = Depends(get_db)):
     rate_data_detail = (
         db.query(
-            func.count(case((models.Rating.rate == 1, 1))).label('star_1'),
-            func.count(case((models.Rating.rate == 2, 1))).label('star_2'),
-            func.count(case((models.Rating.rate == 3, 1))).label('star_3'),
-            func.count(case((models.Rating.rate == 4, 1))).label('star_4'),
-            func.count(case((models.Rating.rate == 5, 1))).label('star_5'),
+            func.count(case((models.Rating.rate == 1, 1))).label("star_1"),
+            func.count(case((models.Rating.rate == 2, 1))).label("star_2"),
+            func.count(case((models.Rating.rate == 3, 1))).label("star_3"),
+            func.count(case((models.Rating.rate == 4, 1))).label("star_4"),
+            func.count(case((models.Rating.rate == 5, 1))).label("star_5"),
         )
         .filter(models.Rating.user_id == user_id)
         .group_by(models.Rating.user_id)
@@ -64,7 +71,6 @@ class StatusEnum(str, Enum):
 
 @router.get("/astrologer", response_model=Page[AstroModel])
 # @router.get("/astrologer")
-# def astrologer_list(token: str = Depends(JWTBearer()), db: Session = Depends(get_db)):
 def astrologer_list(
     astrologer_status: StatusEnum = Query(1),
     search: Optional[str] = Query(None),
@@ -133,12 +139,15 @@ def rate_astrologer(
     return avg_rate(item.user_id, True, db)
 
 
-@router.get("/astrologer-detail/{astrologer_id}", response_model=Union[AstroModelWithRateStatics, AstroModel])
+@router.get(
+    "/astrologer-detail/{astrologer_id}",
+    response_model=Union[AstroModelWithRateStatics, AstroModel],
+)
 def astrologer_detail(
     astrologer_id: int,
     db: Session = Depends(get_db),
 ):
-    
+
     astrologer = (
         db.query(models.User, models.Astrologer)
         .join(models.Astrologer, models.User.id == models.Astrologer.user_id)
@@ -146,9 +155,28 @@ def astrologer_detail(
         .first()
     )
     # print(type(astrologer) is dict)
-    if astrologer:        
+    if astrologer:
         astrologer = astrologer._asdict()
         rating_statics_data = fetch_rating_detail(astrologer["User"].id, db)
         astrologer["rate_statics"] = rating_statics_data
-    
+
     return astrologer
+
+
+@router.get("/astrologer-reviews", response_model=Page[RatingOutModel])
+def astrologer_review_listing(astrologer_id: int, db: Session = Depends(get_db)):
+    """get pagination listing of reviews for a given astrologer
+    Args:
+        astrologer_id (int): astrologer ID
+        db (Session, optional): _description_. Defaults to Depends(get_db).
+
+    Returns:
+        _type_: dict
+    """    
+    astrologer = (
+        db.query(models.Rating)
+        .join(models.Astrologer, models.Rating.user_id == models.Astrologer.user_id)
+        .filter(models.Astrologer.id == astrologer_id)
+        .all()
+    )
+    return paginate(astrologer)

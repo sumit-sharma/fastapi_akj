@@ -1,6 +1,6 @@
 from datetime import date
 import json
-from typing import Optional, List
+from typing import Any, Optional, List
 
 from pydantic import BaseModel, Field
 
@@ -31,6 +31,15 @@ class LanguageModel(BaseModel):
     class Config:
         orm_mode = True
 
+class BasicUserModel(BaseModel):
+    first_name: str
+    last_name: Optional[str]
+    shortName: Optional[str]
+    profile_image: Optional[str]
+    
+    class Config:
+        orm_mode = True
+
 class UpdateProfileModel(BaseModel):
     first_name: str
     last_name: Optional[str]
@@ -55,9 +64,6 @@ class UserModel(UpdateProfileModel):
     role: RoleModel
     languages: List[LanguageModel]
     is_blocked: bool
-    class Config:
-        orm_mode = True
-
 
 class AstrologerModel(BaseModel):
     id: Optional[int] = Field(..., alias='astrologer_id')
@@ -99,6 +105,18 @@ class RatingInModel(BaseModel):
     user_id: int
     rate: int
     remark: Optional[str]
+
+
+class RatingOutModel(BaseModel):
+    # user_id: int
+    rate: int
+    remark: Optional[str]
+    created_at: Any
+    creator: BasicUserModel
+    
+    class Config:
+        orm_mode = True
+
 
 
 class RouteInAccessModel(BaseModel):
