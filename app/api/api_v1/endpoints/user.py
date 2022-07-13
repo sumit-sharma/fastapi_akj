@@ -2,8 +2,9 @@ import datetime
 from enum import Enum
 from token import OP
 import api.api_v1.endpoints
-from typing import Optional, List, Union
+from typing import Literal, Optional, List, Union
 from fastapi import APIRouter, Depends, Query
+from api.deps import RoleChecker
 from core.auth.auth_bearer import JWTBearer, decodeJWT
 from schema.user import (
     AstroModelWithRateStatics,
@@ -145,6 +146,7 @@ def rate_astrologer(
 )
 def astrologer_detail(
     astrologer_id: int,
+    response_type: Literal["basic", "with_rate_statics"],
     db: Session = Depends(get_db),
 ):
 
@@ -155,7 +157,7 @@ def astrologer_detail(
         .first()
     )
     # print(type(astrologer) is dict)
-    if astrologer:
+    if astrologer and response_type == "with_rate_statics":
         astrologer = astrologer._asdict()
         rating_statics_data = fetch_rating_detail(astrologer["User"].id, db)
         astrologer["rate_statics"] = rating_statics_data
@@ -172,7 +174,7 @@ def astrologer_review_listing(astrologer_id: int, db: Session = Depends(get_db))
 
     Returns:
         _type_: dict
-    """    
+    """
     astrologer = (
         db.query(models.Rating)
         .join(models.Astrologer, models.Rating.user_id == models.Astrologer.user_id)
@@ -180,3 +182,30 @@ def astrologer_review_listing(astrologer_id: int, db: Session = Depends(get_db))
         .all()
     )
     return paginate(astrologer)
+
+
+class AstrologerVisiblityEnum(str, Enum):
+    offline = "offline"
+    online = "online"
+    dnd = "dnd"
+
+
+allowed_roles = RoleChecker(["astrologer"])
+
+@router.put("/astrologer/set-visibilty")
+def astrologer_set_visibilty(
+    visibilty: AstrologerVisiblityEnum = Query("offline"),
+    current_user=Depends(allowed_roles),
+    db: Session = Depends(get_db),
+):
+    astrologer = (
+        db.query(models.Astrologer)
+        .filter(models.Astrologer.user_id == current_user.id)
+        .first()
+    )
+    
+    astrologer.visibilty = visibilty
+    db.add(astrologer)
+    db.commit()
+    db.refresh(astrologer)
+    return astrologer

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 import json
 from typing import Any, Optional, List
 
@@ -67,13 +67,13 @@ class UserModel(UpdateProfileModel):
 
 class AstrologerModel(BaseModel):
     id: Optional[int] = Field(..., alias='astrologer_id')
+    visibilty: str
     experience: Optional[str]
     about: Optional[str]
     rating: Optional[float] = None
     rating_count: Optional[int] = None
     price: Optional[int]
     category: List[CategoriesModel]
-
     class Config:
         orm_mode = True
         allow_population_by_field_name = True
@@ -210,6 +210,28 @@ class DailyHoroscopeModel(InputDailyHoroscopeModel):
     language: LanguageModel
     sunsign: SunsignModel
 
+class DeviceTokenModel(BaseModel):
+    token_type: int
+    device_type: int
+    token: str
 
+class NotificationModel(BaseModel):
+    receiver_id: int
+    content: str
+    entity_type: Optional[str]
+    entity_id: Optional[int]
+    show_sender: bool
+    class Config:
+        orm_mode = True
 
+class InputNotificationModel(NotificationModel):
+    pass
 
+class OutputNotificationModel(NotificationModel):
+    id: int
+    is_read: bool = False
+    sender_id: int
+    created_at: datetime
+    sender: BasicUserModel
+    
+    

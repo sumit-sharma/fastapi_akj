@@ -78,7 +78,7 @@ def create_customer(user=Depends(allowed_roles), db: Session = Depends(get_db)):
     except Exception as ex:
         msg = getattr(ex, "message", str(ex))
         print(msg)
-        return JSONResponse(status_code=422, content={"detail": msg})
+        return JSONResponse(status_code=400, content={"detail": msg})
 
 
 @router.post("/create-order")
@@ -137,4 +137,4 @@ def create_order(
     except Exception as ex:
         msg = getattr(ex, "message", str(ex))
         print(msg)
-        return JSONResponse(status_code=422, content={"detail": msg})
+        return JSONResponse(status_code=400, content={"detail": msg})

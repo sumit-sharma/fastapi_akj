@@ -161,6 +161,7 @@ class Astrologer(Base):
     rating = Column(Float)
     rating_count = Column(Integer)
     price = Column(INTEGER(unsigned=True), default=10)
+    visibilty = Column(String(225), default="offline", comment="set current astrologer status")
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
     status = Column(SmallInteger)
@@ -307,8 +308,34 @@ class DailyHoroscope(Base):
     sunsign = relationship("Sunsign", foreign_keys=[sunsign_id])    
     language = relationship("Language", foreign_keys=[language_id])
     category = relationship("Category", foreign_keys=[category_id])    
-    
 
+class DeviceToken(Base):
+    __tablename__ = "device_tokens"
+    id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+    token_type = Column(Integer, default=1, comment="1: fcm, 2: apn")
+    user_id = Column(BIGINT(unsigned=True), ForeignKey("users.id"))
+    device_type = Column(Integer, comment="1: Android, 2: iPhone")
+    token = Column(String(500))
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+    # relationship
+    user = relationship("User", foreign_keys=[user_id])
+        
 
+class Notification(Base):
+    __tablename__ = "notifications"
+    id = Column(BIGINT(unsigned=True), primary_key=True, autoincrement=True)
+    receiver_id = Column(BIGINT(unsigned=True), ForeignKey("users.id"))
+    content = Column(Text)
+    entity_type = Column(String(225))
+    entity_id = Column(Integer)
+    show_sender = Column(Boolean, default=False)
+    sender_id = Column(BIGINT(unsigned=True), ForeignKey("users.id"))
+    is_read = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, default=datetime.datetime.now())
+    # relationship
+    receiver = relationship("User", foreign_keys=[receiver_id])
+    sender = relationship("User", foreign_keys=[sender_id])
 
 Base.metadata.create_all(bind=engine)

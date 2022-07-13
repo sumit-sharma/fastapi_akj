@@ -60,7 +60,7 @@ def get_current_user(
         user = db.query(models.User).filter(models.User.id == result["user_id"]).first()
         return user
     else:
-        raise HTTPException(status_code=403, detail="Invalid token or expired token.")
+        raise HTTPException(status_code=401, detail="Invalid token or expired token.")
 
 
 def store_user(

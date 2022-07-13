@@ -41,12 +41,12 @@ app.include_router(admin_routes.router, prefix="/admin", tags=['admin'])
 
 @app.get("/")
 async def read_root():
-    return {"message": "Hello World"}
+    return {"detail": "Hello World"}
 
 
 @app.get("/test")
 def test():
-    return {"message": "Hello World"}
+    return {"detail": "Hello World"}
     
 
 add_pagination(app)

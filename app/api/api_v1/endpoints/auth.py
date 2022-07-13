@@ -77,7 +77,7 @@ def send_otp(item: AuthModel, db: Session = Depends(get_db)):
     if user:
         if user.is_blocked:
             raise HTTPException(
-                status_code=403, detail="You have been blocked by administrator."
+                status_code=400, detail="You have been blocked by administrator."
             )
 
         row = models.AccountOtp(otp=otp, user_id=user.id)
@@ -85,10 +85,10 @@ def send_otp(item: AuthModel, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(row)
         return JSONResponse(
-            status_code=200, content={"message": "otp has been send to your mobile"}
+            status_code=200, content={"detail": "otp has been send to your mobile"}
         )
     else:
-        return JSONResponse(status_code=404, content={"message": "user not found"})
+        return JSONResponse(status_code=404, content={"detail": "user not found"})
 
 
 @router.post("/verify_otp")
@@ -98,7 +98,7 @@ def login_access_token(item: LoginModel, db: Session = Depends(get_db)):
         return {"token": signJWT(user.id, db), "detail": user}
     else:
         return JSONResponse(
-            status_code=403, content={"message": "Invalid otp or it has been expired"}
+            status_code=400, content={"detail": "Invalid otp or it has been expired"}
         )
 
 
@@ -107,7 +107,7 @@ def register_user(item: RegisterModel, db: Session = Depends(get_db)):
     user = check_user(item.country_code, item.mobile, db)
     if user:
         return JSONResponse(
-            status_code=400, content={"message": "Phone details already registered"}
+            status_code=400, content={"detail": "Phone details already registered"}
         )
     else:
         itemData = item.dict()
@@ -146,7 +146,7 @@ def user_profile(
     if user:
         return user
     
-    return JSONResponse(status_code=404, content={"message": "user not found"})
+    return JSONResponse(status_code=404, content={"detail": "user not found"})
 
 
 @router.get("/logout", name="logout")

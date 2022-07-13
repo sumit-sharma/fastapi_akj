@@ -148,15 +148,15 @@ def toggle_block_user(
     Returns:
         models.User: user
     """
-    try: 
+    try:
         user = db.query(models.User).filter(models.User.id == user_id).first()
         if user:
-            db.query(models.OauthAccessToken).filter(models.OauthAccessToken.user_id == user_id).update({"revoked": 1})
+            db.query(models.OauthAccessToken).filter(
+                models.OauthAccessToken.user_id == user_id
+            ).update({"revoked": 1})
             user.is_blocked = not user.is_blocked
             db.commit()
             db.refresh(user)
-            
-            
             return user
         raise HTTPException(status_code=404, detail="User not found")
     except:
