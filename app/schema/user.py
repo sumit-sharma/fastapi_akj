@@ -72,7 +72,8 @@ class AstrologerModel(BaseModel):
     about: Optional[str]
     rating: Optional[float] = None
     rating_count: Optional[int] = None
-    price: Optional[int]
+    price: Optional[str]
+    total_call_mins: Optional[int]
     category: List[CategoriesModel]
     class Config:
         orm_mode = True

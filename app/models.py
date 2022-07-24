@@ -161,6 +161,7 @@ class Astrologer(Base):
     rating = Column(Float)
     rating_count = Column(Integer)
     price = Column(INTEGER(unsigned=True), default=10)
+    total_call_mins = Column(INTEGER(unsigned=True), default=0)
     visibilty = Column(String(225), default="offline", comment="set current astrologer status")
     created_at = Column(DateTime, default=datetime.datetime.now())
     updated_at = Column(DateTime, default=datetime.datetime.now())
