@@ -11,6 +11,7 @@ import database, models
 from schema.auth import AuthModel, LoginModel, RegisterModel
 from fastapi.responses import JSONResponse
 from schema.user import UpdateProfileModel, UserModel
+from fastapi.encoders import jsonable_encoder
 import requests
 from settings import otp_exp_min
 from datetime import datetime
@@ -95,7 +96,8 @@ def send_otp(item: AuthModel, db: Session = Depends(get_db)):
 def login_access_token(item: LoginModel, db: Session = Depends(get_db)):
     user = check_user(item.country_code, item.mobile, db)
     if otp_user(user.id, item.otp, db):
-        return {"token": signJWT(user.id, db), "detail": user}
+        encoded_user = jsonable_encoder(user)
+        return {"token": signJWT(user.id, db), "detail": encoded_user}
     else:
         return JSONResponse(
             status_code=400, content={"detail": "Invalid otp or it has been expired"}
